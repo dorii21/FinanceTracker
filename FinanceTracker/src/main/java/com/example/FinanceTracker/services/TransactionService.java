@@ -4,10 +4,11 @@ import com.example.FinanceTracker.dtos.TransactionDTO;
 import com.example.FinanceTracker.entities.Category;
 import com.example.FinanceTracker.entities.TransactionEntity;
 import com.example.FinanceTracker.entities.TransactionType;
+import com.example.FinanceTracker.exceptions.TransactionNotFoundException;
 import com.example.FinanceTracker.mappers.TransactionMapper;
 import com.example.FinanceTracker.repositories.TransactionRepository;
-import com.example.FinanceTracker.mappers.TransactionMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -32,8 +33,22 @@ public class TransactionService {
         return transactionMapper.toDTO(newTransactionEntity);
     }
 
-    public void deleteTransaction(TransactionDTO transactionDTO) {
-        transactionRepository.deleteById(transactionDTO.getId());
+    public TransactionDTO modifyTransaction(Long id,TransactionDTO transactionDTO) {
+        transactionDTO.setId(id);
+        Optional<TransactionEntity> optional = transactionRepository.findById(transactionDTO.getId());
+        if(optional.isPresent()) {
+            TransactionEntity transactionEntity = optional.get();
+            transactionMapper.updateTransactionFromDTO(transactionDTO,transactionEntity);
+            transactionRepository.save(transactionEntity);
+            return transactionMapper.toDTO(transactionEntity);
+        }else throw new TransactionNotFoundException("Transaction Not Found");
+    }
+
+    public void deleteTransaction(Long id){
+        Optional<TransactionEntity> optional = transactionRepository.findById(id);
+        if (optional.isPresent()) {
+            transactionRepository.deleteById(id);
+        } else throw new TransactionNotFoundException("Transaction not found");
     }
 
     public List<TransactionDTO> filterByCategory(Category category) {

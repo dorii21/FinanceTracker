@@ -17,7 +17,7 @@ public class TransactionEntity {
     private TransactionType type;
 
     @Column
-    private int amount;
+    private Long amount;
 
     @Column
     private LocalDate date;

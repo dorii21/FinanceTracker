@@ -11,9 +11,9 @@ import java.time.LocalDate;
 public class TransactionDTO {
     private long id;
     private TransactionType type;
-    private int amount;
+    private Long amount;
     private LocalDate date;
     private Category category;
     private String comment;
-    private UserEntity user;
+    private Long userId;
 }
