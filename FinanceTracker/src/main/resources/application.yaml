@@ -1,0 +1,15 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: FinanceTracker
+  jpa:
+    generate-ddl: true
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5432/financedb
+    username: postgres
+    password: postgres
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
