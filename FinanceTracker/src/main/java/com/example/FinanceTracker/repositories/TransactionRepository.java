@@ -11,10 +11,14 @@ import java.util.Optional;
 
 public interface TransactionRepository extends JpaRepository<TransactionEntity, Long> {
     Optional<TransactionEntity> findByIdAndUserId(Long id, Long userId);
-    List<TransactionEntity> findByCategoryAndUserId(Category category,Long userId);
+
+    List<TransactionEntity> findByCategoryAndUserId(Category category, Long userId);
+
     List<TransactionEntity> findByAmountBetweenAndUserId(int min, int max, Long userId);
 
     List<TransactionEntity> findByDateBetweenAndUserId(LocalDate dateAfter, LocalDate dateBefore, Long userId);
-    List<TransactionEntity> findByTypeAndUserId(TransactionType type,Long userId);
+
+    List<TransactionEntity> findByTypeAndUserId(TransactionType type, Long userId);
+
     List<TransactionEntity> findByUserId(Long userId);
 }

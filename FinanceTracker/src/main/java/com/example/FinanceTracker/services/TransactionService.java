@@ -26,37 +26,37 @@ public class TransactionService {
 
     public List<TransactionDTO> listTransactions() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Long id=userRepository.findByEmail(email).get().getId();
+        Long id = userRepository.findByEmail(email).get().getId();
         List<TransactionEntity> transactionEntities = transactionRepository.findByUserId(id);
         return transactionMapper.toDTOs(transactionEntities);
     }
 
     public TransactionDTO createTransaction(TransactionDTO transactionDTO) {
         TransactionEntity transactionEntity = transactionMapper.toEntity(transactionDTO);
-        String email= SecurityContextHolder.getContext().getAuthentication().getName();
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         transactionEntity.setUser(userRepository.findByEmail(email).get());
-        if(transactionEntity.getType().equals(TransactionType.EXPENSE))transactionEntity.setCategory(null);
+        if (transactionEntity.getType().equals(TransactionType.EXPENSE)) transactionEntity.setCategory(null);
         TransactionEntity newTransactionEntity = transactionRepository.save(transactionEntity);
         return transactionMapper.toDTO(newTransactionEntity);
     }
 
-    public TransactionDTO modifyTransaction(Long id,TransactionDTO transactionDTO) {
+    public TransactionDTO modifyTransaction(Long id, TransactionDTO transactionDTO) {
         transactionDTO.setId(id);
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Long userId=userRepository.findByEmail(email).get().getId();
-        Optional<TransactionEntity> optional = transactionRepository.findByIdAndUserId(transactionDTO.getId(),userId);
-        if(optional.isPresent()) {
+        Long userId = userRepository.findByEmail(email).get().getId();
+        Optional<TransactionEntity> optional = transactionRepository.findByIdAndUserId(transactionDTO.getId(), userId);
+        if (optional.isPresent()) {
             TransactionEntity transactionEntity = optional.get();
-            transactionMapper.updateTransactionFromDTO(transactionDTO,transactionEntity);
+            transactionMapper.updateTransactionFromDTO(transactionDTO, transactionEntity);
             transactionRepository.save(transactionEntity);
             return transactionMapper.toDTO(transactionEntity);
-        }else throw new TransactionNotFoundException("Transaction Not Found");
+        } else throw new TransactionNotFoundException("Transaction Not Found");
     }
 
-    public void deleteTransaction(Long id){
+    public void deleteTransaction(Long id) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Long userId=userRepository.findByEmail(email).get().getId();
-        Optional<TransactionEntity> optional = transactionRepository.findByIdAndUserId(id,userId);
+        Long userId = userRepository.findByEmail(email).get().getId();
+        Optional<TransactionEntity> optional = transactionRepository.findByIdAndUserId(id, userId);
         if (optional.isPresent()) {
             transactionRepository.deleteById(id);
         } else throw new TransactionNotFoundException("Transaction not found");
@@ -64,36 +64,36 @@ public class TransactionService {
 
     public List<TransactionDTO> filterByCategory(Category category) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Long userId=userRepository.findByEmail(email).get().getId();
-        List<TransactionEntity> transactions=transactionRepository.findByCategoryAndUserId(category,userId);
+        Long userId = userRepository.findByEmail(email).get().getId();
+        List<TransactionEntity> transactions = transactionRepository.findByCategoryAndUserId(category, userId);
         return transactionMapper.toDTOs(transactions);
     }
 
     public List<TransactionDTO> filterByAmountBetween(int min, int max) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Long userId=userRepository.findByEmail(email).get().getId();
-        List<TransactionEntity> transactions=transactionRepository.findByAmountBetweenAndUserId(min, max,userId);
+        Long userId = userRepository.findByEmail(email).get().getId();
+        List<TransactionEntity> transactions = transactionRepository.findByAmountBetweenAndUserId(min, max, userId);
         return transactionMapper.toDTOs(transactions);
     }
 
     public List<TransactionDTO> filterByDateBetween(LocalDate min, LocalDate max) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Long userId=userRepository.findByEmail(email).get().getId();
-        List<TransactionEntity> transactions=transactionRepository.findByDateBetweenAndUserId(min, max,userId);
+        Long userId = userRepository.findByEmail(email).get().getId();
+        List<TransactionEntity> transactions = transactionRepository.findByDateBetweenAndUserId(min, max, userId);
         return transactionMapper.toDTOs(transactions);
     }
 
     public List<TransactionDTO> getExpenses() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Long userId=userRepository.findByEmail(email).get().getId();
-        List<TransactionEntity> transactionEntities = transactionRepository.findByTypeAndUserId(TransactionType.EXPENSE,userId);
+        Long userId = userRepository.findByEmail(email).get().getId();
+        List<TransactionEntity> transactionEntities = transactionRepository.findByTypeAndUserId(TransactionType.EXPENSE, userId);
         return transactionMapper.toDTOs(transactionEntities);
     }
 
     public List<TransactionDTO> getIncome() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Long userId=userRepository.findByEmail(email).get().getId();
-        List<TransactionEntity> transactionEntities = transactionRepository.findByTypeAndUserId(TransactionType.INCOME,userId);
+        Long userId = userRepository.findByEmail(email).get().getId();
+        List<TransactionEntity> transactionEntities = transactionRepository.findByTypeAndUserId(TransactionType.INCOME, userId);
         return transactionMapper.toDTOs(transactionEntities);
     }
 }

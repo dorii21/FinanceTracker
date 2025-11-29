@@ -17,7 +17,7 @@ public class UserService {
     private final UserMapper userMapper;
 
     public UserDTO register(UserDTO userDTO) {
-        UserEntity userEntity =userMapper.toUserEntity(userDTO);
+        UserEntity userEntity = userMapper.toUserEntity(userDTO);
         String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
         userEntity.setPassword(encodedPassword);
         UserEntity savedUserEntity = userRepository.save(userEntity);
