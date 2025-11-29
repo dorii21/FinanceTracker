@@ -4,10 +4,8 @@ import com.example.FinanceTracker.dtos.TransactionDTO;
 import com.example.FinanceTracker.entities.Category;
 import com.example.FinanceTracker.entities.TransactionEntity;
 import com.example.FinanceTracker.entities.TransactionType;
-import com.example.FinanceTracker.entities.UserEntity;
 import com.example.FinanceTracker.exceptions.TransactionNotFoundException;
 import com.example.FinanceTracker.mappers.TransactionMapper;
-import com.example.FinanceTracker.mappers.UserMapper;
 import com.example.FinanceTracker.repositories.TransactionRepository;
 import com.example.FinanceTracker.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +35,7 @@ public class TransactionService {
         TransactionEntity transactionEntity = transactionMapper.toEntity(transactionDTO);
         String email= SecurityContextHolder.getContext().getAuthentication().getName();
         transactionEntity.setUser(userRepository.findByEmail(email).get());
+        if(transactionEntity.getType().equals(TransactionType.EXPENSE))transactionEntity.setCategory(null);
         TransactionEntity newTransactionEntity = transactionRepository.save(transactionEntity);
         return transactionMapper.toDTO(newTransactionEntity);
     }
