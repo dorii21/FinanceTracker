@@ -4,11 +4,14 @@ import com.example.FinanceTracker.dtos.TransactionDTO;
 import com.example.FinanceTracker.entities.Category;
 import com.example.FinanceTracker.entities.TransactionEntity;
 import com.example.FinanceTracker.entities.TransactionType;
+import com.example.FinanceTracker.entities.UserEntity;
 import com.example.FinanceTracker.exceptions.TransactionNotFoundException;
 import com.example.FinanceTracker.mappers.TransactionMapper;
+import com.example.FinanceTracker.mappers.UserMapper;
 import com.example.FinanceTracker.repositories.TransactionRepository;
+import com.example.FinanceTracker.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,21 +24,28 @@ public class TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final TransactionMapper transactionMapper;
+    private final UserRepository userRepository;
 
     public List<TransactionDTO> listTransactions() {
-        List<TransactionEntity> transactionEntities = transactionRepository.findAll();
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Long id=userRepository.findByEmail(email).get().getId();
+        List<TransactionEntity> transactionEntities = transactionRepository.findByUserId(id);
         return transactionMapper.toDTOs(transactionEntities);
     }
 
     public TransactionDTO createTransaction(TransactionDTO transactionDTO) {
         TransactionEntity transactionEntity = transactionMapper.toEntity(transactionDTO);
+        String email= SecurityContextHolder.getContext().getAuthentication().getName();
+        transactionEntity.setUser(userRepository.findByEmail(email).get());
         TransactionEntity newTransactionEntity = transactionRepository.save(transactionEntity);
         return transactionMapper.toDTO(newTransactionEntity);
     }
 
     public TransactionDTO modifyTransaction(Long id,TransactionDTO transactionDTO) {
         transactionDTO.setId(id);
-        Optional<TransactionEntity> optional = transactionRepository.findById(transactionDTO.getId());
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Long userId=userRepository.findByEmail(email).get().getId();
+        Optional<TransactionEntity> optional = transactionRepository.findByIdAndUserId(transactionDTO.getId(),userId);
         if(optional.isPresent()) {
             TransactionEntity transactionEntity = optional.get();
             transactionMapper.updateTransactionFromDTO(transactionDTO,transactionEntity);
@@ -45,34 +55,46 @@ public class TransactionService {
     }
 
     public void deleteTransaction(Long id){
-        Optional<TransactionEntity> optional = transactionRepository.findById(id);
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Long userId=userRepository.findByEmail(email).get().getId();
+        Optional<TransactionEntity> optional = transactionRepository.findByIdAndUserId(id,userId);
         if (optional.isPresent()) {
             transactionRepository.deleteById(id);
         } else throw new TransactionNotFoundException("Transaction not found");
     }
 
     public List<TransactionDTO> filterByCategory(Category category) {
-        List<TransactionEntity> transactions=transactionRepository.findByCategory(category);
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Long userId=userRepository.findByEmail(email).get().getId();
+        List<TransactionEntity> transactions=transactionRepository.findByCategoryAndUserId(category,userId);
         return transactionMapper.toDTOs(transactions);
     }
 
     public List<TransactionDTO> filterByAmountBetween(int min, int max) {
-        List<TransactionEntity> transactions=transactionRepository.findByAmountBetween(min, max);
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Long userId=userRepository.findByEmail(email).get().getId();
+        List<TransactionEntity> transactions=transactionRepository.findByAmountBetweenAndUserId(min, max,userId);
         return transactionMapper.toDTOs(transactions);
     }
 
     public List<TransactionDTO> filterByDateBetween(LocalDate min, LocalDate max) {
-        List<TransactionEntity> transactions=transactionRepository.findByDateBetween(min, max);
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Long userId=userRepository.findByEmail(email).get().getId();
+        List<TransactionEntity> transactions=transactionRepository.findByDateBetweenAndUserId(min, max,userId);
         return transactionMapper.toDTOs(transactions);
     }
 
     public List<TransactionDTO> getExpenses() {
-        List<TransactionEntity> transactionEntities = transactionRepository.findByType(TransactionType.EXPENSE);
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Long userId=userRepository.findByEmail(email).get().getId();
+        List<TransactionEntity> transactionEntities = transactionRepository.findByTypeAndUserId(TransactionType.EXPENSE,userId);
         return transactionMapper.toDTOs(transactionEntities);
     }
 
     public List<TransactionDTO> getIncome() {
-        List<TransactionEntity> transactionEntities = transactionRepository.findByType(TransactionType.INCOME);
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Long userId=userRepository.findByEmail(email).get().getId();
+        List<TransactionEntity> transactionEntities = transactionRepository.findByTypeAndUserId(TransactionType.INCOME,userId);
         return transactionMapper.toDTOs(transactionEntities);
     }
 }

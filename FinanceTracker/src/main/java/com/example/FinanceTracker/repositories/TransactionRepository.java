@@ -7,10 +7,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface TransactionRepository extends JpaRepository<TransactionEntity, Long> {
-    List<TransactionEntity> findByCategory(Category category);
-    List<TransactionEntity> findByAmountBetween(int min, int max);
-    List<TransactionEntity> findByDateBetween(LocalDate min, LocalDate max);
-    List<TransactionEntity> findByType(TransactionType type);
+    Optional<TransactionEntity> findByIdAndUserId(Long id, Long userId);
+    List<TransactionEntity> findByCategoryAndUserId(Category category,Long userId);
+    List<TransactionEntity> findByAmountBetweenAndUserId(int min, int max, Long userId);
+
+    List<TransactionEntity> findByDateBetweenAndUserId(LocalDate dateAfter, LocalDate dateBefore, Long userId);
+    List<TransactionEntity> findByTypeAndUserId(TransactionType type,Long userId);
+    List<TransactionEntity> findByUserId(Long userId);
 }

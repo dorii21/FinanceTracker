@@ -15,5 +15,4 @@ public class TransactionDTO {
     private LocalDate date;
     private Category category;
     private String comment;
-    private Long userId;
 }

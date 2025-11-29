@@ -18,8 +18,11 @@ public class UserEntity {
     @Column
     private String lastName;
 
-    @Column
+    @Column(unique = true,nullable = false)
     private String email;
+
+    @Column(nullable = false)
+    private String password;
 
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "user")
     private List<TransactionEntity> transactions;
