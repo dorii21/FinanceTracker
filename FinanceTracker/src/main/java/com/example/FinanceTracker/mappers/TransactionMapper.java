@@ -5,7 +5,6 @@ import com.example.FinanceTracker.entities.TransactionEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 

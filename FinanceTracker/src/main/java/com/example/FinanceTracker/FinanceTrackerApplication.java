@@ -8,8 +8,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 @EnableWebSecurity
 public class FinanceTrackerApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(FinanceTrackerApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(FinanceTrackerApplication.class, args);
+    }
 
 }

@@ -24,21 +24,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf->csrf.disable())
-                .authorizeHttpRequests(auth->auth
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/register").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(form->form.permitAll())
+                .formLogin(form -> form.permitAll())
                 .httpBasic(Customizer.withDefaults());
         return http.build();
     }
 
     @Bean
     public UserDetailsService userDetailsService(UserRepository userRepository) {
-        return email->{
-            UserEntity user=userRepository.findByEmail(email)
-                    .orElseThrow(()->new EmailNotFoundException("User not found"));
+        return email -> {
+            UserEntity user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new EmailNotFoundException("User not found"));
             return org.springframework.security.core.userdetails.User
                     .withUsername(user.getEmail())
                     .password(user.getPassword())
