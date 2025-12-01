@@ -19,6 +19,26 @@ public class Transaction {
         this.comment = comment;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public Long  getAmount() {
+        return amount;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
     public String getAmountsToString() {
         if (type == TransactionType.EXPENSE) {
             return "-" + amount.toString();

@@ -24,11 +24,12 @@ public class TransactionService {
         return transactions;
     }
 
-    public ObservableList<String> getAmountsToString(ObservableList<Transaction> transactions) {
-        ObservableList<String> amounts = FXCollections.observableArrayList();
+    public Transaction findById(Long id) {
         for (Transaction transaction : transactions) {
-            amounts.add(transaction.getAmountsToString());
+            if (transaction.getId().equals(id)) {
+                return transaction;
+            }
         }
-        return amounts;
+        return null;
     }
 }

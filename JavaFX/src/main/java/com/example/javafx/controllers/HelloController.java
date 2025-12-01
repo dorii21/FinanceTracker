@@ -1,5 +1,6 @@
 package com.example.javafx.controllers;
 
+import com.example.javafx.models.Transaction;
 import com.example.javafx.services.TransactionService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,12 +19,14 @@ public class HelloController {
     private HBox dateFilter;
     private TextField categoryFilter;
     private Button ok;
+    private TransactionService transactionService;
 
-    public HelloController(HBox amountFilter, HBox dateFilter, TextField categoryFilter,Button ok) {
+    public HelloController(HBox amountFilter, HBox dateFilter, TextField categoryFilter, Button ok, TransactionService transactionService) {
         this.amountFilter = amountFilter;
         this.dateFilter = dateFilter;
         this.categoryFilter = categoryFilter;
         this.ok = ok;
+        this.transactionService = transactionService;
     }
 
     public void choiceBoxSelection(String choice) {
@@ -70,30 +73,50 @@ public class HelloController {
         }
     }
 
-    public void editTransaction() {
+    public void editTransaction(Long id) {
+        Transaction transaction = transactionService.findById(id);
         Stage newStage = new Stage();
-        Text amount=new Text("Amount:");
-        Text date=new Text("Date:");
-        Text category=new Text("Category:");
-        Text comment=new Text("Comment:");
-        Button save=new Button("Save");
-        Button delete=new Button("Delete");
-        TextField amountField=new TextField();
-        TextField dateField=new TextField();
-        TextField categoryField=new TextField();
-        TextField commentField=new TextField();
+        Text amount = new Text("Amount:");
+        Text date = new Text("Date:");
+        Text category = new Text("Category:");
+        Text comment = new Text("Comment:");
+        Button save = new Button("Save");
+        Button delete = new Button("Delete");
+        TextField amountField;
+        TextField dateField;
+        TextField categoryField;
+        TextField commentField;
+        if (transaction.getAmount() != null) {
+            amountField = new TextField(transaction.getAmount().toString());
+        } else {
+            amountField = new TextField();
+        }
+        if (transaction.getDate() != null) {
+            dateField = new TextField(transaction.getDate().toString());
+        }else
+            dateField = new TextField();
+        if (transaction.getCategory() != null) {
+            categoryField = new TextField(transaction.getCategory().toString());
+        }else
+            categoryField = new TextField();
+        if (transaction.getComment() != null) {
+            commentField = new TextField(transaction.getComment());
+        }else
+            commentField = new TextField();
+
         GridPane gridPane = new GridPane();
-        gridPane.add(amount,0,0);
-        gridPane.add(amountField,1,0);
-        gridPane.add(date,0,1);
-        gridPane.add(dateField,1,1);
-        gridPane.add(category,0,2);
-        gridPane.add(categoryField,1,2);
-        gridPane.add(comment,0,3);
-        gridPane.add(commentField,1,3);
-        gridPane.add(delete,0,4);
-        gridPane.add(save,1,4);
-        Scene scene = new Scene(gridPane,200,200);
+        gridPane.add(amount, 0, 0);
+        gridPane.add(amountField, 1, 0);
+        gridPane.add(date, 0, 1);
+        gridPane.add(dateField, 1, 1);
+        gridPane.add(category, 0, 2);
+        gridPane.add(categoryField, 1, 2);
+        gridPane.add(comment, 0, 3);
+        gridPane.add(commentField, 1, 3);
+        gridPane.add(delete, 0, 4);
+        gridPane.add(save, 1, 4);
+        Scene scene = new Scene(gridPane, 200, 200);
+        newStage.setTitle(transaction.getType().toString());
         newStage.setScene(scene);
         newStage.show();
     }

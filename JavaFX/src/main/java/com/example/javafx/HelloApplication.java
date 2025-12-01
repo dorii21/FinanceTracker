@@ -1,7 +1,9 @@
 package com.example.javafx;
 
 import com.example.javafx.controllers.HelloController;
+import com.example.javafx.models.Transaction;
 import com.example.javafx.services.TransactionService;
+import com.example.javafx.view.CustomCell;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,26 +28,26 @@ public class HelloApplication extends Application {
 
 
         //Buttons
-        Button add=new Button("+");
-        Button ok=new Button("OK");
+        Button add = new Button("+");
+        Button ok = new Button("OK");
 
         //Texts
-        Text title=new Text("TRANSACTIONS");
-        Text filterBy=new Text("Filter by");
+        Text title = new Text("TRANSACTIONS");
+        Text filterBy = new Text("Filter by");
 
         //Filter by textfield/datepicker
-        TextField categoryFilter=new TextField();
-        TextField minAmount=new TextField();
-        TextField maxAmount=new TextField();
-        DatePicker minDate=new DatePicker();
-        DatePicker maxDate=new DatePicker();
+        TextField categoryFilter = new TextField();
+        TextField minAmount = new TextField();
+        TextField maxAmount = new TextField();
+        DatePicker minDate = new DatePicker();
+        DatePicker maxDate = new DatePicker();
 
         //Box for filters
-        HBox amountFilter=new HBox();
-        amountFilter.getChildren().addAll(new Label("min:"),minAmount,new Label("max:"),maxAmount);
-        HBox dateFilter=new HBox();
-        dateFilter.getChildren().addAll(new Label("min:"),minDate,new Label("max:"),maxDate);
-        VBox filter=new VBox(10);
+        HBox amountFilter = new HBox();
+        amountFilter.getChildren().addAll(new Label("min:"), minAmount, new Label("max:"), maxAmount);
+        HBox dateFilter = new HBox();
+        dateFilter.getChildren().addAll(new Label("min:"), minDate, new Label("max:"), maxDate);
+        VBox filter = new VBox(10);
         filter.setStyle("-fx-background-color: #D3D3D3;");
         amountFilter.setVisible(false);
         amountFilter.setManaged(false);
@@ -58,33 +60,30 @@ public class HelloApplication extends Application {
 
         //Transactions
         TransactionService transactionService = new TransactionService();
-        HelloController controller=new HelloController(amountFilter,dateFilter,categoryFilter,ok);
-        List<String > list = new ArrayList<>(transactionService.getAmountsToString(transactionService.getTransactions()));
-        ListView<Button> listView = new ListView<>();
-        for (String transaction : list) {
-            Button button = new Button(transaction);
-            button.setOnAction(event -> {
-                controller.editTransaction();
-            });
-            listView.getItems().add(button);
-        }
+        HelloController controller=new HelloController(amountFilter,dateFilter,categoryFilter,ok,transactionService);
+        ListView<Transaction> listView = new ListView<>();
+        listView.setItems(transactionService.getTransactions());
+        listView.setCellFactory(l -> new CustomCell());
+        listView.setOnMouseClicked(event -> {
+            controller.editTransaction(listView.getSelectionModel().getSelectedItem().getId());
+        });
 
         //Filter by choicebox
-        ChoiceBox<String> filters=new ChoiceBox<String>();
+        ChoiceBox<String> filters = new ChoiceBox<String>();
         filters.setPrefWidth(200);
-        filters.getItems().addAll("Category","Amount","Date","Expense only","Income only");
+        filters.getItems().addAll("Category", "Amount", "Date", "Expense only", "Income only");
 
-        filter.getChildren().addAll(filterBy,filters,categoryFilter,amountFilter,dateFilter,ok);
+        filter.getChildren().addAll(filterBy, filters, categoryFilter, amountFilter, dateFilter, ok);
 
         filters.setOnAction(e -> {
             controller.choiceBoxSelection(filters.getValue());
         });
 
         //Left side
-        HBox header=new HBox(140);
-        header.getChildren().addAll(title,add);
-        VBox box=new VBox();
-        box.getChildren().addAll(header,listView);
+        HBox header = new HBox(140);
+        header.getChildren().addAll(title, add);
+        VBox box = new VBox();
+        box.getChildren().addAll(header, listView);
 
         //Alignment
         GridPane gridPane = new GridPane();
@@ -96,9 +95,11 @@ public class HelloApplication extends Application {
         gridPane.add(box, 0, 0);
         gridPane.add(filter, 1, 0);
 
-        Scene scene=new Scene(gridPane,700,500);
+        Scene scene = new Scene(gridPane, 700, 500);
         stage.setScene(scene);
         stage.setTitle("Finance Tracker");
         stage.show();
     }
+
+
 }
