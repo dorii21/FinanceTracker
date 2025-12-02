@@ -1,27 +1,28 @@
 package com.example.javafx.controllers;
 
+import com.example.javafx.models.Category;
 import com.example.javafx.models.Transaction;
+import com.example.javafx.models.TransactionType;
 import com.example.javafx.services.TransactionService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.lang.reflect.Type;
+
 public class HelloController {
     private HBox amountFilter;
     private HBox dateFilter;
-    private TextField categoryFilter;
+    private ChoiceBox<Category> categoryFilter;
     private Button ok;
     private TransactionService transactionService;
 
-    public HelloController(HBox amountFilter, HBox dateFilter, TextField categoryFilter, Button ok, TransactionService transactionService) {
+    public HelloController(HBox amountFilter, HBox dateFilter, ChoiceBox<Category> categoryFilter, Button ok, TransactionService transactionService) {
         this.amountFilter = amountFilter;
         this.dateFilter = dateFilter;
         this.categoryFilter = categoryFilter;
@@ -83,8 +84,24 @@ public class HelloController {
         Button save = new Button("Save");
         Button delete = new Button("Delete");
         TextField amountField;
-        TextField dateField;
-        TextField categoryField;
+        DatePicker dateField;
+        ChoiceBox<Category> categoryField = new ChoiceBox<>();
+        categoryField.getItems().addAll(Category.GROCERIES,
+                Category.HOUSING,
+                Category.TRANSPORTATION,
+                Category.INSURANCE,
+                Category.HEALTH,
+                Category.SUBSCRIPTIONS,
+                Category.EDUCATION,
+                Category.RESTAURANT,
+                Category.CLOTHING,
+                Category.ENTERTAINMENT,
+                Category.TRAVEL,
+                Category.HOBBIES,
+                Category.GIFT,
+                Category.PHONE,
+                Category.OTHER);
+
         TextField commentField;
         if (transaction.getAmount() != null) {
             amountField = new TextField(transaction.getAmount().toString());
@@ -92,16 +109,15 @@ public class HelloController {
             amountField = new TextField();
         }
         if (transaction.getDate() != null) {
-            dateField = new TextField(transaction.getDate().toString());
-        }else
-            dateField = new TextField();
+            dateField = new DatePicker(transaction.getDate());
+        } else
+            dateField = new DatePicker();
         if (transaction.getCategory() != null) {
-            categoryField = new TextField(transaction.getCategory().toString());
-        }else
-            categoryField = new TextField();
+            categoryField.setValue(transaction.getCategory());
+        }
         if (transaction.getComment() != null) {
             commentField = new TextField(transaction.getComment());
-        }else
+        } else
             commentField = new TextField();
 
         GridPane gridPane = new GridPane();
@@ -116,8 +132,56 @@ public class HelloController {
         gridPane.add(delete, 0, 4);
         gridPane.add(save, 1, 4);
         Scene scene = new Scene(gridPane, 200, 200);
-        newStage.setTitle(transaction.getType().toString());
+        newStage.setTitle(transaction.getType().
+
+                toString());
         newStage.setScene(scene);
         newStage.show();
+    }
+
+    public void createTransaction() {
+        Text amount = new Text("Amount:");
+        Text date = new Text("Date:");
+        Text category = new Text("Category:");
+        Text comment = new Text("Comment:");
+        Text type = new Text("Type:");
+        TextField amountField = new TextField();
+        DatePicker datePicker = new DatePicker();
+        ChoiceBox<Category> categoryField = new ChoiceBox<>();
+        categoryField.getItems().addAll(Category.GROCERIES,
+                Category.HOUSING,
+                Category.TRANSPORTATION,
+                Category.INSURANCE,
+                Category.HEALTH,
+                Category.SUBSCRIPTIONS,
+                Category.EDUCATION,
+                Category.RESTAURANT,
+                Category.CLOTHING,
+                Category.ENTERTAINMENT,
+                Category.TRAVEL,
+                Category.HOBBIES,
+                Category.GIFT,
+                Category.PHONE,
+                Category.OTHER);
+
+        TextField commentField = new TextField();
+        ChoiceBox<TransactionType> typeField = new ChoiceBox<>();
+        typeField.getItems().addAll(TransactionType.EXPENSE,TransactionType.INCOME);
+        GridPane gridPane = new GridPane();
+        gridPane.add(amount, 0, 0);
+        gridPane.add(amountField, 1, 0);
+        gridPane.add(date, 0, 1);
+        gridPane.add(datePicker, 1, 1);
+        gridPane.add(category, 0, 2);
+        gridPane.add(categoryField, 1, 2);
+        gridPane.add(comment, 0, 3);
+        gridPane.add(commentField, 1, 3);
+        gridPane.add(type, 0, 4);
+        gridPane.add(typeField, 1, 4);
+        Scene scene = new Scene(gridPane, 200, 200);
+        Stage stage = new Stage();
+        stage.setTitle("Add transaction");
+        stage.setScene(scene);
+        stage.show();
     }
 }

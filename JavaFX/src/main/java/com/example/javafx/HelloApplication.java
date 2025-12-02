@@ -1,6 +1,7 @@
 package com.example.javafx;
 
 import com.example.javafx.controllers.HelloController;
+import com.example.javafx.models.Category;
 import com.example.javafx.models.Transaction;
 import com.example.javafx.services.TransactionService;
 import com.example.javafx.view.CustomCell;
@@ -36,13 +37,28 @@ public class HelloApplication extends Application {
         Text filterBy = new Text("Filter by");
 
         //Filter by textfield/datepicker
-        TextField categoryFilter = new TextField();
         TextField minAmount = new TextField();
         TextField maxAmount = new TextField();
         DatePicker minDate = new DatePicker();
         DatePicker maxDate = new DatePicker();
 
         //Box for filters
+        ChoiceBox<Category> categoryFilter=new ChoiceBox<>();
+        categoryFilter.getItems().addAll(Category.GROCERIES,
+                Category.HOUSING,
+                Category.TRANSPORTATION,
+                Category.INSURANCE,
+                Category.HEALTH,
+                Category.SUBSCRIPTIONS,
+                Category.EDUCATION,
+                Category.RESTAURANT,
+                Category.CLOTHING,
+                Category.ENTERTAINMENT,
+                Category.TRAVEL,
+                Category.HOBBIES,
+                Category.GIFT,
+                Category.PHONE,
+                Category.OTHER);
         HBox amountFilter = new HBox();
         amountFilter.getChildren().addAll(new Label("min:"), minAmount, new Label("max:"), maxAmount);
         HBox dateFilter = new HBox();
@@ -67,6 +83,8 @@ public class HelloApplication extends Application {
         listView.setOnMouseClicked(event -> {
             controller.editTransaction(listView.getSelectionModel().getSelectedItem().getId());
         });
+
+        add.setOnAction(e -> {controller.createTransaction();});
 
         //Filter by choicebox
         ChoiceBox<String> filters = new ChoiceBox<String>();
