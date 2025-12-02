@@ -1,9 +1,11 @@
 package com.example.javafx;
 
 import com.example.javafx.controllers.HelloController;
+import com.example.javafx.controllers.LoginController;
 import com.example.javafx.models.Category;
-import com.example.javafx.models.Transaction;
+import com.example.javafx.models.TransactionDTO;
 import com.example.javafx.services.TransactionService;
+import com.example.javafx.services.UserService;
 import com.example.javafx.view.CustomCell;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -19,15 +21,43 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.nio.BufferUnderflowException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class HelloApplication extends Application {
+    private UserService userService;
+    private TransactionService transactionService;
+    private Stage primaryStage;
+
     @Override
     public void start(Stage stage) throws IOException {
+        this.primaryStage = stage;
+        stage.setTitle("Finance Tracker");
+        this.userService = new UserService();
+        this.transactionService = new TransactionService(userService);
+        loginView();
+        stage.show();
+    }
 
+    private void loginView() {
+        VBox vBox = new VBox();
+        Text loginLabel = new Text("Login");
+        Text email = new Text("Email:");
+        Text password = new Text("Password:");
+        TextField emailField = new TextField();
+        TextField passwordField = new TextField();
+        Button loginButton = new Button("Login");
+        vBox.getChildren().addAll(loginLabel, email, emailField, password, passwordField, loginButton);
 
+        Label messageLabel = new Label();
+
+        LoginController loginController = new LoginController(userService, this::transactionView, messageLabel);
+        loginButton.setOnAction(e -> {
+            loginController.handleLoginButton(emailField.getText(), passwordField.getText());
+        });
+        Scene scene = new Scene(vBox, 300, 300);
+        primaryStage.setScene(scene);
+    }
+
+    private void transactionView() {
         //Buttons
         Button add = new Button("+");
         Button ok = new Button("OK");
@@ -43,7 +73,7 @@ public class HelloApplication extends Application {
         DatePicker maxDate = new DatePicker();
 
         //Box for filters
-        ChoiceBox<Category> categoryFilter=new ChoiceBox<>();
+        ChoiceBox<Category> categoryFilter = new ChoiceBox<>();
         categoryFilter.getItems().addAll(Category.GROCERIES,
                 Category.HOUSING,
                 Category.TRANSPORTATION,
@@ -74,17 +104,26 @@ public class HelloApplication extends Application {
         ok.setVisible(false);
         ok.setManaged(false);
 
-        //Transactions
-        TransactionService transactionService = new TransactionService();
-        HelloController controller=new HelloController(amountFilter,dateFilter,categoryFilter,ok,transactionService);
-        ListView<Transaction> listView = new ListView<>();
-        listView.setItems(transactionService.getTransactions());
+        ObservableList<TransactionDTO> transactions = FXCollections.observableArrayList();
+        ListView<TransactionDTO> listView = new ListView<>(transactions);
+        Runnable refreshList = () -> {
+            transactions.setAll(transactionService.listTransactions());
+        };
+
+        HelloController controller = new HelloController(amountFilter, dateFilter, categoryFilter, ok, transactionService, refreshList);
+        refreshList.run();
+
         listView.setCellFactory(l -> new CustomCell());
         listView.setOnMouseClicked(event -> {
-            controller.editTransaction(listView.getSelectionModel().getSelectedItem().getId());
+            TransactionDTO selected = listView.getSelectionModel().getSelectedItem();
+            if (selected != null && event.getClickCount() == 2) {
+                controller.editTransaction(selected.getId());
+            }
         });
 
-        add.setOnAction(e -> {controller.createTransaction();});
+        add.setOnAction(e -> {
+            controller.createTransaction();
+        });
 
         //Filter by choicebox
         ChoiceBox<String> filters = new ChoiceBox<String>();
@@ -114,10 +153,8 @@ public class HelloApplication extends Application {
         gridPane.add(filter, 1, 0);
 
         Scene scene = new Scene(gridPane, 700, 500);
-        stage.setScene(scene);
-        stage.setTitle("Finance Tracker");
-        stage.show();
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
-
-
 }
+

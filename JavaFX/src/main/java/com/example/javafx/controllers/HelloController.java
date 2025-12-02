@@ -1,11 +1,9 @@
 package com.example.javafx.controllers;
 
 import com.example.javafx.models.Category;
-import com.example.javafx.models.Transaction;
+import com.example.javafx.models.TransactionDTO;
 import com.example.javafx.models.TransactionType;
 import com.example.javafx.services.TransactionService;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -13,21 +11,21 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.lang.reflect.Type;
-
 public class HelloController {
     private HBox amountFilter;
     private HBox dateFilter;
     private ChoiceBox<Category> categoryFilter;
     private Button ok;
     private TransactionService transactionService;
+    private final Runnable refreshList;
 
-    public HelloController(HBox amountFilter, HBox dateFilter, ChoiceBox<Category> categoryFilter, Button ok, TransactionService transactionService) {
+    public HelloController(HBox amountFilter, HBox dateFilter, ChoiceBox<Category> categoryFilter, Button ok, TransactionService transactionService, Runnable refreshList) {
         this.amountFilter = amountFilter;
         this.dateFilter = dateFilter;
         this.categoryFilter = categoryFilter;
         this.ok = ok;
         this.transactionService = transactionService;
+        this.refreshList = refreshList;
     }
 
     public void choiceBoxSelection(String choice) {
@@ -75,7 +73,11 @@ public class HelloController {
     }
 
     public void editTransaction(Long id) {
-        Transaction transaction = transactionService.findById(id);
+        TransactionDTO transaction = transactionService.findById(id);
+        if (transaction == null) {
+            showAlert("Error", "Transaction Not Found");
+            return;
+        }
         Stage newStage = new Stage();
         Text amount = new Text("Amount:");
         Text date = new Text("Date:");
@@ -139,6 +141,14 @@ public class HelloController {
         newStage.show();
     }
 
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
     public void createTransaction() {
         Text amount = new Text("Amount:");
         Text date = new Text("Date:");
@@ -166,7 +176,7 @@ public class HelloController {
 
         TextField commentField = new TextField();
         ChoiceBox<TransactionType> typeField = new ChoiceBox<>();
-        typeField.getItems().addAll(TransactionType.EXPENSE,TransactionType.INCOME);
+        typeField.getItems().addAll(TransactionType.EXPENSE, TransactionType.INCOME);
         GridPane gridPane = new GridPane();
         gridPane.add(amount, 0, 0);
         gridPane.add(amountField, 1, 0);

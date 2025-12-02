@@ -1,12 +1,12 @@
 package com.example.javafx.view;
 
-import com.example.javafx.models.Transaction;
+import com.example.javafx.models.TransactionDTO;
 import com.example.javafx.models.TransactionType;
 import javafx.scene.control.ListCell;
 
-public class CustomCell extends ListCell<Transaction> {
+public class CustomCell extends ListCell<TransactionDTO> {
     @Override
-    protected void updateItem(Transaction item, boolean empty) {
+    protected void updateItem(TransactionDTO item, boolean empty) {
         super.updateItem(item, empty);
         if (empty || item == null) {
             setText(null);
@@ -16,7 +16,6 @@ public class CustomCell extends ListCell<Transaction> {
             } else {
                 setText("+" + item.getAmount().toString());
             }
-
         }
     }
 }

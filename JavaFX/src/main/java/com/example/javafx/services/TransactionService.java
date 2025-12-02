@@ -1,35 +1,75 @@
 package com.example.javafx.services;
 
-import com.example.javafx.models.Category;
-import com.example.javafx.models.Transaction;
-import com.example.javafx.models.TransactionType;
+import com.example.javafx.models.TransactionDTO;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.time.LocalDate;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.List;
 
 public class TransactionService {
-    private final ObservableList<Transaction> transactions = FXCollections.observableArrayList();
+    private final String BASE_URL = "http://localhost:8081/api/financetracker";
+    private final HttpClient httpClient = HttpClient.newHttpClient();
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final UserService userService;
 
-    public TransactionService() {
-        transactions.add(
-                new Transaction(1L, TransactionType.EXPENSE, 2000L, LocalDate.of(2025, 11, 1), Category.GROCERIES, "Bevásárlás")
-        );
-        transactions.add(
-                new Transaction(2L, TransactionType.INCOME, 50000L, LocalDate.of(2025, 12, 1), null, "Ösztöndíj")
-        );
+    public TransactionService(UserService userService) {
+        this.userService = userService;
+        objectMapper.registerModule(new JavaTimeModule());
     }
 
-    public ObservableList<Transaction> getTransactions() {
-        return transactions;
-    }
-
-    public Transaction findById(Long id) {
-        for (Transaction transaction : transactions) {
-            if (transaction.getId().equals(id)) {
-                return transaction;
-            }
+    private HttpRequest.Builder addAuth(HttpRequest.Builder builder) {
+        String authHeader = userService.getAuthHeader();
+        if (authHeader != null) {
+            builder.header("Authorization", authHeader);
         }
-        return null;
+        return builder;
+    }
+
+    public ObservableList<TransactionDTO> listTransactions() {
+        try {
+            HttpRequest request = addAuth(HttpRequest.newBuilder())
+                    .uri(URI.create(BASE_URL))
+                    .GET().build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                List<TransactionDTO> transactions = objectMapper.readValue(response.body(), new TypeReference<List<TransactionDTO>>() {
+                });
+                return FXCollections.observableArrayList(transactions);
+            } else {
+                System.err.println("Error: " + response.statusCode());
+                return FXCollections.emptyObservableList();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return FXCollections.emptyObservableList();
+        }
+    }
+
+    public TransactionDTO findById(Long id) {
+        try {
+            HttpRequest request = addAuth(HttpRequest.newBuilder())
+                    .uri(URI.create(BASE_URL + "/" + id))
+                    .GET().build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                return objectMapper.readValue(response.body(), TransactionDTO.class);
+            } else if (response.statusCode() == 404) {
+                System.err.println("Not Found");
+                return null;
+            } else {
+                System.err.println("Error: " + response.statusCode());
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
