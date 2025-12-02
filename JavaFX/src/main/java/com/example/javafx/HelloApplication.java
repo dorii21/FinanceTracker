@@ -125,12 +125,10 @@ public class HelloApplication extends Application {
 
         ObservableList<TransactionDTO> transactions = FXCollections.observableArrayList();
         ListView<TransactionDTO> listView = new ListView<>(transactions);
-        Runnable refreshList = () -> {
-            transactions.setAll(transactionService.listTransactions());
-        };
 
-        HelloController controller = new HelloController(amountFilter, dateFilter, categoryFilter, ok, transactionService, refreshList);
-        refreshList.run();
+
+        HelloController controller = new HelloController(amountFilter, dateFilter, categoryFilter, ok, transactionService, transactions);
+        transactions.setAll(transactionService.listTransactions());
 
         listView.setCellFactory(l -> new CustomCell());
         listView.setOnMouseClicked(event -> {
@@ -155,36 +153,19 @@ public class HelloApplication extends Application {
             controller.choiceBoxSelection(filters.getValue());
         });
 
-        Runnable runCategoryFilter = () -> {
-            transactions.setAll(transactionService.filterByCategory(categoryFilter.getValue()));
-        };
-        Runnable runAmountFilter = () -> {
-            transactions.setAll(transactionService.filterByAmount(Long.valueOf(minAmount.getText()), Long.valueOf(maxAmount.getText())));
-        };
-        Runnable runDateFilter = () -> {
-            transactions.setAll(transactionService.filterByDate(minDate.getValue(), maxDate.getValue()));
-        };
-        Runnable runIncomeFilter = () -> {
-            transactions.setAll(transactionService.filterByIncome());
-        };
-        Runnable runExpenseFilter = () -> {
-            transactions.setAll(transactionService.filterByExpense());
-        };
-
-
         ok.setOnAction(e -> {
             if (filters.getValue().equals("Category")) {
-                runCategoryFilter.run();
+                transactions.setAll(transactionService.filterByCategory(categoryFilter.getValue()));
             } else if (filters.getValue().equals("Amount")) {
-                runAmountFilter.run();
+                transactions.setAll(transactionService.filterByAmount(Long.valueOf(minAmount.getText()), Long.valueOf(maxAmount.getText())));
             } else if (filters.getValue().equals("Date")) {
-                runDateFilter.run();
+                transactions.setAll(transactionService.filterByDate(minDate.getValue(), maxDate.getValue()));
             } else if (filters.getValue().equals("Expense only")) {
-                runExpenseFilter.run();
+                transactions.setAll(transactionService.filterByExpense());
             } else if (filters.getValue().equals("Income only")) {
-                runIncomeFilter.run();
+                transactions.setAll(transactionService.filterByIncome());
             } else {
-                refreshList.run();
+                transactions.setAll(transactionService.listTransactions());
             }
         });
 

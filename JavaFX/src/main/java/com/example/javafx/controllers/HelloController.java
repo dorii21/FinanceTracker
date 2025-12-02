@@ -4,6 +4,7 @@ import com.example.javafx.models.Category;
 import com.example.javafx.models.TransactionDTO;
 import com.example.javafx.models.TransactionType;
 import com.example.javafx.services.TransactionService;
+import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -17,15 +18,15 @@ public class HelloController {
     private ChoiceBox<Category> categoryFilter;
     private Button ok;
     private TransactionService transactionService;
-    private final Runnable refreshList;
+    private ObservableList<TransactionDTO> transactions;
 
-    public HelloController(HBox amountFilter, HBox dateFilter, ChoiceBox<Category> categoryFilter, Button ok, TransactionService transactionService, Runnable refreshList) {
+    public HelloController(HBox amountFilter, HBox dateFilter, ChoiceBox<Category> categoryFilter, Button ok, TransactionService transactionService, ObservableList<TransactionDTO> transactions) {
         this.amountFilter = amountFilter;
         this.dateFilter = dateFilter;
         this.categoryFilter = categoryFilter;
         this.ok = ok;
         this.transactionService = transactionService;
-        this.refreshList = refreshList;
+        this.transactions = transactions;
     }
 
     public void choiceBoxSelection(String choice) {
@@ -128,13 +129,13 @@ public class HelloController {
             transaction.setComment(commentField.getText());
             transaction.setType(transaction.getType());
             transactionService.updateTransaction(transaction);
-            refreshList.run();
+            transactions.setAll(transactionService.listTransactions());
             newStage.close();
         });
 
         delete.setOnAction(event -> {
             transactionService.deleteTransaction(transaction);
-            refreshList.run();
+            transactions.setAll(transactionService.listTransactions());
             newStage.close();
         });
 
@@ -205,7 +206,7 @@ public class HelloController {
         createButton.setOnAction(event -> {
             TransactionDTO transactionDTO = new TransactionDTO(typeField.getValue(), Long.valueOf(amountField.getText()), datePicker.getValue(), categoryField.getValue(), commentField.getText());
             transactionService.createTransaction(transactionDTO);
-            refreshList.run();
+            transactions.setAll(transactionService.listTransactions());
             stage.close();
         });
 

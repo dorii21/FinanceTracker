@@ -13,9 +13,10 @@ public class TransactionEntity {
     private Long id;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private TransactionType type;
 
-    @Column
+    @Column(nullable = false)
     private Long amount;
 
     @Column

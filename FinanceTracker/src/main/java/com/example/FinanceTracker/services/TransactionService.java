@@ -47,7 +47,7 @@ public class TransactionService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         transactionEntity.setUser(user);
-        if (transactionEntity.getType().equals(TransactionType.EXPENSE)) transactionEntity.setCategory(null);
+        if (transactionEntity.getType().equals(TransactionType.INCOME)) transactionEntity.setCategory(null);
         TransactionEntity newTransactionEntity = transactionRepository.save(transactionEntity);
         return transactionMapper.toDTO(newTransactionEntity);
     }
