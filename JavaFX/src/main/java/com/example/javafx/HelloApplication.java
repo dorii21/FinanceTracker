@@ -38,14 +38,30 @@ public class HelloApplication extends Application {
     }
 
     private void loginView() {
-        VBox vBox = new VBox();
+        VBox loginBox = new VBox();
         Text loginLabel = new Text("Login");
         Text email = new Text("Email:");
         Text password = new Text("Password:");
         TextField emailField = new TextField();
         TextField passwordField = new TextField();
         Button loginButton = new Button("Login");
-        vBox.getChildren().addAll(loginLabel, email, emailField, password, passwordField, loginButton);
+        loginBox.getChildren().addAll(loginLabel, email, emailField, password, passwordField, loginButton);
+
+        VBox registerBox = new VBox();
+        Text registerLabel = new Text("Register");
+        Text firstName = new Text("First Name:");
+        Text lastName = new Text("Last Name:");
+        Text regEmail = new Text("Email:");
+        Text regPassword = new Text("Password:");
+        TextField lastNameField = new TextField();
+        TextField firstNameField = new TextField();
+        TextField registerEmail = new TextField();
+        TextField registerPassword = new TextField();
+        Button registerButton = new Button("Register");
+        registerBox.getChildren().addAll(registerLabel, firstName, firstNameField, lastName, lastNameField, regEmail, registerEmail, regPassword, registerPassword,registerButton);
+
+        HBox hbox = new HBox();
+        hbox.getChildren().addAll(loginBox, registerBox);
 
         Label messageLabel = new Label();
 
@@ -53,7 +69,10 @@ public class HelloApplication extends Application {
         loginButton.setOnAction(e -> {
             loginController.handleLoginButton(emailField.getText(), passwordField.getText());
         });
-        Scene scene = new Scene(vBox, 300, 300);
+        registerButton.setOnAction(e -> {
+            loginController.handleRegisterButton(registerEmail.getText(),registerPassword.getText(),firstNameField.getText(),lastNameField.getText());
+        });
+        Scene scene = new Scene(hbox, 300, 300);
         primaryStage.setScene(scene);
     }
 

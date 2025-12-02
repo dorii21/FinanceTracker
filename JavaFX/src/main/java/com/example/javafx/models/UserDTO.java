@@ -6,7 +6,7 @@ public class UserDTO {
     private String email;
     private String password;
 
-    public UserDTO(String firstName, String lastName, String email, String password) {
+    public UserDTO(String email, String firstName, String lastName, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
