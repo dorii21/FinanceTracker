@@ -43,7 +43,7 @@ public class HelloApplication extends Application {
         Text email = new Text("Email:");
         Text password = new Text("Password:");
         TextField emailField = new TextField();
-        TextField passwordField = new TextField();
+        PasswordField passwordField = new PasswordField();
         Button loginButton = new Button("Login");
         loginBox.getChildren().addAll(loginLabel, email, emailField, password, passwordField, loginButton);
 
@@ -56,7 +56,7 @@ public class HelloApplication extends Application {
         TextField lastNameField = new TextField();
         TextField firstNameField = new TextField();
         TextField registerEmail = new TextField();
-        TextField registerPassword = new TextField();
+        PasswordField registerPassword = new PasswordField();
         Button registerButton = new Button("Register");
         registerBox.getChildren().addAll(registerLabel, firstName, firstNameField, lastName, lastNameField, regEmail, registerEmail, regPassword, registerPassword, registerButton);
 
@@ -136,7 +136,7 @@ public class HelloApplication extends Application {
         listView.setOnMouseClicked(event -> {
             TransactionDTO selected = listView.getSelectionModel().getSelectedItem();
             if (selected != null && event.getClickCount() == 2) {
-                controller.editTransaction(selected.getId());
+                controller.editTransaction(selected);
             }
         });
 

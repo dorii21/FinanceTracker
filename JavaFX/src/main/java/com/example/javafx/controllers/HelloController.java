@@ -72,12 +72,7 @@ public class HelloController {
         }
     }
 
-    public void editTransaction(Long id) {
-        TransactionDTO transaction = transactionService.findById(id);
-        if (transaction == null) {
-            showAlert("Error", "Transaction Not Found");
-            return;
-        }
+    public void editTransaction(TransactionDTO transaction) {
         Stage newStage = new Stage();
         Text amount = new Text("Amount:");
         Text date = new Text("Date:");
@@ -158,14 +153,6 @@ public class HelloController {
         newStage.setTitle(transaction.getType().toString());
         newStage.setScene(scene);
         newStage.show();
-    }
-
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 
     public void createTransaction() {

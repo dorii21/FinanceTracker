@@ -55,27 +55,6 @@ public class TransactionService {
         }
     }
 
-    public TransactionDTO findById(Long id) {
-        try {
-            HttpRequest request = addAuth(HttpRequest.newBuilder())
-                    .uri(URI.create(BASE_URL + "/" + id))
-                    .GET().build();
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == 200) {
-                return objectMapper.readValue(response.body(), TransactionDTO.class);
-            } else if (response.statusCode() == 404) {
-                System.err.println("Not Found");
-                return null;
-            } else {
-                System.err.println("Error: " + response.statusCode());
-                return null;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     public void updateTransaction(TransactionDTO transactionDTO) {
         String json;
         try {
@@ -90,9 +69,7 @@ public class TransactionService {
             } else if (response.statusCode() == 404) {
                 throw new IOException("Not Found");
             } else throw new IOException("Error: " + response.statusCode());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -110,9 +87,7 @@ public class TransactionService {
             } else if (response.statusCode() == 404) {
                 System.err.println("Not Found");
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -131,9 +106,7 @@ public class TransactionService {
             } else if (response.statusCode() == 404) {
                 System.err.println("Not Found");
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
