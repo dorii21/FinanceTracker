@@ -1,12 +1,14 @@
 package com.example.javafx.services;
 
 import com.example.javafx.models.TransactionDTO;
+import com.example.javafx.models.TransactionType;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -70,6 +72,47 @@ public class TransactionService {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public void updateTransaction(TransactionDTO transactionDTO) {
+        String json;
+        try {
+            json = objectMapper.writeValueAsString(transactionDTO);
+            HttpRequest request = addAuth(HttpRequest.newBuilder())
+                    .uri(URI.create(BASE_URL + "/" + transactionDTO.getId()))
+                    .header("Content-Type", "application/json")
+                    .PUT(HttpRequest.BodyPublishers.ofString(json)).build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                return;
+            } else if (response.statusCode() == 404) {
+                throw new IOException("Not Found");
+            } else throw new IOException("Error: " + response.statusCode());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteTransaction(TransactionDTO transactionDTO) {
+        String json;
+        try {
+            json=objectMapper.writeValueAsString(transactionDTO);
+            HttpRequest request=addAuth(HttpRequest.newBuilder())
+                    .uri(URI.create(BASE_URL+"/"+transactionDTO.getId()))
+                    .DELETE().build();
+            HttpResponse<String> response=httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                return;
+            }else if (response.statusCode() == 404) {
+                System.err.println("Not Found");
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }catch (InterruptedException e){
+            e.printStackTrace();
         }
     }
 }

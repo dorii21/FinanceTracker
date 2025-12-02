@@ -26,8 +26,16 @@ public class TransactionDTO {
         return type;
     }
 
+    public void setType(TransactionType type) {
+        this.type = type;
+    }
+
     public Long getAmount() {
         return amount;
+    }
+
+    public void setAmount(Long amount) {
+        this.amount = amount;
     }
 
     public Long getId() {
@@ -38,11 +46,23 @@ public class TransactionDTO {
         return date;
     }
 
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
     public Category getCategory() {
         return category;
     }
 
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
     public String getComment() {
         return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

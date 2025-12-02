@@ -84,6 +84,7 @@ public class HelloController {
         Text category = new Text("Category:");
         Text comment = new Text("Comment:");
         Button save = new Button("Save");
+
         Button delete = new Button("Delete");
         TextField amountField;
         DatePicker dateField;
@@ -121,6 +122,29 @@ public class HelloController {
             commentField = new TextField(transaction.getComment());
         } else
             commentField = new TextField();
+
+
+        save.setOnAction(event -> {
+            if(!amountField.getText().isBlank()){
+                transaction.setAmount(Long.valueOf(amountField.getText()));
+            }
+            transaction.setCategory(categoryField.getValue());
+            transaction.setDate(dateField.getValue());
+            transaction.setComment(commentField.getText());
+            transaction.setType(transaction.getType());
+            if(transaction.getType().equals(TransactionType.INCOME)){
+                transaction.setCategory(null);
+            }
+            transactionService.updateTransaction(transaction);
+            refreshList.run();
+            newStage.close();
+        });
+
+        delete.setOnAction(event -> {
+            transactionService.deleteTransaction(transaction);
+            refreshList.run();
+            newStage.close();
+        });
 
         GridPane gridPane = new GridPane();
         gridPane.add(amount, 0, 0);
