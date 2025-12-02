@@ -1,7 +1,7 @@
 package com.example.javafx.services;
 
+import com.example.javafx.models.Category;
 import com.example.javafx.models.TransactionDTO;
-import com.example.javafx.models.TransactionType;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -13,6 +13,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.LocalDate;
 import java.util.List;
 
 public class TransactionService {
@@ -99,20 +100,141 @@ public class TransactionService {
     public void deleteTransaction(TransactionDTO transactionDTO) {
         String json;
         try {
-            json=objectMapper.writeValueAsString(transactionDTO);
-            HttpRequest request=addAuth(HttpRequest.newBuilder())
-                    .uri(URI.create(BASE_URL+"/"+transactionDTO.getId()))
+            json = objectMapper.writeValueAsString(transactionDTO);
+            HttpRequest request = addAuth(HttpRequest.newBuilder())
+                    .uri(URI.create(BASE_URL + "/" + transactionDTO.getId()))
                     .DELETE().build();
-            HttpResponse<String> response=httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
                 return;
-            }else if (response.statusCode() == 404) {
+            } else if (response.statusCode() == 404) {
                 System.err.println("Not Found");
             }
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
-        }catch (InterruptedException e){
+        } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void createTransaction(TransactionDTO transactionDTO) {
+        String json;
+        try {
+            json = objectMapper.writeValueAsString(transactionDTO);
+            HttpRequest request = addAuth(HttpRequest.newBuilder())
+                    .uri(URI.create((BASE_URL)))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(json)).build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                return;
+            } else if (response.statusCode() == 404) {
+                System.err.println("Not Found");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ObservableList<TransactionDTO> filterByCategory(Category category) {
+        try {
+            HttpRequest request = addAuth(HttpRequest.newBuilder())
+                    .uri(URI.create(BASE_URL + "/filter/category?category=" + category.name()))
+                    .GET().build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                List<TransactionDTO> transactions = objectMapper.readValue(response.body(), new TypeReference<List<TransactionDTO>>() {
+                });
+                return FXCollections.observableArrayList(transactions);
+            } else {
+                System.err.println("Error: " + response.statusCode());
+                return FXCollections.emptyObservableList();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return FXCollections.emptyObservableList();
+        }
+    }
+
+    public ObservableList<TransactionDTO> filterByAmount(Long min, Long max) {
+        try {
+            HttpRequest request = addAuth(HttpRequest.newBuilder())
+                    .uri(URI.create(BASE_URL + "/filter/amount?min=" + min + "&max=" + max))
+                    .GET().build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                List<TransactionDTO> transactions = objectMapper.readValue(response.body(), new TypeReference<List<TransactionDTO>>() {
+                });
+                return FXCollections.observableArrayList(transactions);
+            } else {
+                System.err.println("Error: " + response.statusCode());
+                return FXCollections.emptyObservableList();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return FXCollections.emptyObservableList();
+        }
+    }
+
+    public ObservableList<TransactionDTO> filterByDate(LocalDate min, LocalDate max) {
+        try {
+            HttpRequest request = addAuth(HttpRequest.newBuilder())
+                    .uri(URI.create(BASE_URL + "/filter/date?min=" + min + "&max=" + max))
+                    .GET().build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                List<TransactionDTO> transactions = objectMapper.readValue(response.body(), new TypeReference<List<TransactionDTO>>() {
+                });
+                return FXCollections.observableArrayList(transactions);
+            } else {
+                System.err.println("Error: " + response.statusCode());
+                return FXCollections.emptyObservableList();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return FXCollections.emptyObservableList();
+        }
+    }
+
+    public ObservableList<TransactionDTO> filterByIncome() {
+        try {
+            HttpRequest request = addAuth(HttpRequest.newBuilder())
+                    .uri(URI.create(BASE_URL + "/filter/income"))
+                    .GET().build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                List<TransactionDTO> transactions = objectMapper.readValue(response.body(), new TypeReference<List<TransactionDTO>>() {
+                });
+                return FXCollections.observableArrayList(transactions);
+            } else {
+                System.err.println("Error: " + response.statusCode());
+                return FXCollections.emptyObservableList();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return FXCollections.emptyObservableList();
+        }
+    }
+
+    public ObservableList<TransactionDTO> filterByExpense() {
+        try {
+            HttpRequest request = addAuth(HttpRequest.newBuilder())
+                    .uri(URI.create(BASE_URL + "/filter/expenses"))
+                    .GET().build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                List<TransactionDTO> transactions = objectMapper.readValue(response.body(), new TypeReference<List<TransactionDTO>>() {
+                });
+                return FXCollections.observableArrayList(transactions);
+            } else {
+                System.err.println("Error: " + response.statusCode());
+                return FXCollections.emptyObservableList();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return FXCollections.emptyObservableList();
         }
     }
 }

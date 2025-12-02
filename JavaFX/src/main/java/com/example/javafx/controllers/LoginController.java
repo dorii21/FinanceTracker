@@ -31,26 +31,26 @@ public class LoginController {
 
     public void handleRegisterButton(String email, String password, String firstName, String lastName) {
         UserDTO userDTO = new UserDTO(email, password, firstName, lastName);
-        try{
+        try {
             userService.register(userDTO);
             message.setText("User registered successfully");
             onSuccess.run();
-        }catch(IOException e){
+        } catch (IOException e) {
             Alert.AlertType alertType;
-            if(e.getMessage().equals("Username already exists")){
+            if (e.getMessage().equals("Username already exists")) {
                 alertType = Alert.AlertType.WARNING;
-            }else{
+            } else {
                 alertType = Alert.AlertType.ERROR;
             }
             message.setText(e.getMessage());
-            showAlert(alertType,message.getText());
-        }catch(InterruptedException e){
+            showAlert(alertType, message.getText());
+        } catch (InterruptedException e) {
             message.setText(e.getMessage());
-            showAlert(Alert.AlertType.ERROR,message.getText());
+            showAlert(Alert.AlertType.ERROR, message.getText());
         }
     }
 
-    private void showAlert(Alert.AlertType alertType,String message) {
+    private void showAlert(Alert.AlertType alertType, String message) {
         Alert alert = new Alert(alertType);
         alert.setHeaderText(null);
         alert.setContentText(message);

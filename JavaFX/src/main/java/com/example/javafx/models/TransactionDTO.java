@@ -10,8 +10,8 @@ public class TransactionDTO {
     private Category category;
     private String comment;
 
-    TransactionDTO(Long id, TransactionType type, Long amount, LocalDate date, Category category, String comment) {
-        this.id = id;
+    public TransactionDTO(TransactionType type, Long amount, LocalDate date, Category category, String comment) {
+        this.id = null;
         this.type = type;
         this.amount = amount;
         this.date = date;

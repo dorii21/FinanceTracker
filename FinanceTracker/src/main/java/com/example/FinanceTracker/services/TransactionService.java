@@ -81,7 +81,7 @@ public class TransactionService {
         return transactionMapper.toDTOs(transactions);
     }
 
-    public List<TransactionDTO> filterByAmountBetween(int min, int max) {
+    public List<TransactionDTO> filterByAmountBetween(Long min, Long max) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         Long userId = user.getId();

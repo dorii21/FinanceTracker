@@ -53,7 +53,7 @@ public class TransactionController {
     }
 
     @GetMapping("/filter/amount")
-    public ResponseEntity<List<TransactionDTO>> filterByAmountBetween(@RequestParam int min, int max) {
+    public ResponseEntity<List<TransactionDTO>> filterByAmountBetween(@RequestParam Long min, Long max) {
         return ResponseEntity.ok(transactionService.filterByAmountBetween(min, max));
     }
 

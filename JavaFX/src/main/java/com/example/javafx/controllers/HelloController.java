@@ -125,16 +125,13 @@ public class HelloController {
 
 
         save.setOnAction(event -> {
-            if(!amountField.getText().isBlank()){
+            if (!amountField.getText().isBlank()) {
                 transaction.setAmount(Long.valueOf(amountField.getText()));
             }
             transaction.setCategory(categoryField.getValue());
             transaction.setDate(dateField.getValue());
             transaction.setComment(commentField.getText());
             transaction.setType(transaction.getType());
-            if(transaction.getType().equals(TransactionType.INCOME)){
-                transaction.setCategory(null);
-            }
             transactionService.updateTransaction(transaction);
             refreshList.run();
             newStage.close();
@@ -158,9 +155,7 @@ public class HelloController {
         gridPane.add(delete, 0, 4);
         gridPane.add(save, 1, 4);
         Scene scene = new Scene(gridPane, 200, 200);
-        newStage.setTitle(transaction.getType().
-
-                toString());
+        newStage.setTitle(transaction.getType().toString());
         newStage.setScene(scene);
         newStage.show();
     }
@@ -201,6 +196,8 @@ public class HelloController {
         TextField commentField = new TextField();
         ChoiceBox<TransactionType> typeField = new ChoiceBox<>();
         typeField.getItems().addAll(TransactionType.EXPENSE, TransactionType.INCOME);
+        Button createButton = new Button("Create");
+
         GridPane gridPane = new GridPane();
         gridPane.add(amount, 0, 0);
         gridPane.add(amountField, 1, 0);
@@ -212,10 +209,19 @@ public class HelloController {
         gridPane.add(commentField, 1, 3);
         gridPane.add(type, 0, 4);
         gridPane.add(typeField, 1, 4);
+        gridPane.add(createButton, 0, 5);
         Scene scene = new Scene(gridPane, 200, 200);
         Stage stage = new Stage();
         stage.setTitle("Add transaction");
         stage.setScene(scene);
+
+        createButton.setOnAction(event -> {
+            TransactionDTO transactionDTO = new TransactionDTO(typeField.getValue(), Long.valueOf(amountField.getText()), datePicker.getValue(), categoryField.getValue(), commentField.getText());
+            transactionService.createTransaction(transactionDTO);
+            refreshList.run();
+            stage.close();
+        });
+
         stage.show();
     }
 }

@@ -58,7 +58,7 @@ public class HelloApplication extends Application {
         TextField registerEmail = new TextField();
         TextField registerPassword = new TextField();
         Button registerButton = new Button("Register");
-        registerBox.getChildren().addAll(registerLabel, firstName, firstNameField, lastName, lastNameField, regEmail, registerEmail, regPassword, registerPassword,registerButton);
+        registerBox.getChildren().addAll(registerLabel, firstName, firstNameField, lastName, lastNameField, regEmail, registerEmail, regPassword, registerPassword, registerButton);
 
         HBox hbox = new HBox();
         hbox.getChildren().addAll(loginBox, registerBox);
@@ -70,7 +70,7 @@ public class HelloApplication extends Application {
             loginController.handleLoginButton(emailField.getText(), passwordField.getText());
         });
         registerButton.setOnAction(e -> {
-            loginController.handleRegisterButton(registerEmail.getText(),registerPassword.getText(),firstNameField.getText(),lastNameField.getText());
+            loginController.handleRegisterButton(registerEmail.getText(), registerPassword.getText(), firstNameField.getText(), lastNameField.getText());
         });
         Scene scene = new Scene(hbox, 300, 300);
         primaryStage.setScene(scene);
@@ -147,12 +147,45 @@ public class HelloApplication extends Application {
         //Filter by choicebox
         ChoiceBox<String> filters = new ChoiceBox<String>();
         filters.setPrefWidth(200);
-        filters.getItems().addAll("Category", "Amount", "Date", "Expense only", "Income only");
+        filters.getItems().addAll("Category", "Amount", "Date", "Expense only", "Income only", "Show all");
 
         filter.getChildren().addAll(filterBy, filters, categoryFilter, amountFilter, dateFilter, ok);
 
         filters.setOnAction(e -> {
             controller.choiceBoxSelection(filters.getValue());
+        });
+
+        Runnable runCategoryFilter = () -> {
+            transactions.setAll(transactionService.filterByCategory(categoryFilter.getValue()));
+        };
+        Runnable runAmountFilter = () -> {
+            transactions.setAll(transactionService.filterByAmount(Long.valueOf(minAmount.getText()), Long.valueOf(maxAmount.getText())));
+        };
+        Runnable runDateFilter = () -> {
+            transactions.setAll(transactionService.filterByDate(minDate.getValue(), maxDate.getValue()));
+        };
+        Runnable runIncomeFilter = () -> {
+            transactions.setAll(transactionService.filterByIncome());
+        };
+        Runnable runExpenseFilter = () -> {
+            transactions.setAll(transactionService.filterByExpense());
+        };
+
+
+        ok.setOnAction(e -> {
+            if (filters.getValue().equals("Category")) {
+                runCategoryFilter.run();
+            } else if (filters.getValue().equals("Amount")) {
+                runAmountFilter.run();
+            } else if (filters.getValue().equals("Date")) {
+                runDateFilter.run();
+            } else if (filters.getValue().equals("Expense only")) {
+                runExpenseFilter.run();
+            } else if (filters.getValue().equals("Income only")) {
+                runIncomeFilter.run();
+            } else {
+                refreshList.run();
+            }
         });
 
         //Left side
