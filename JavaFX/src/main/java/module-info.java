@@ -12,6 +12,7 @@ module com.example.javafx {
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.datatype.jsr310;
     requires javafx.base;
+    requires com.fasterxml.jackson.core;
 
     opens com.example.javafx to javafx.fxml;
     exports com.example.javafx;

@@ -13,6 +13,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -53,6 +56,27 @@ public class TransactionService {
             e.printStackTrace();
             return FXCollections.emptyObservableList();
         }
+    }
+
+    public boolean csvExport(List<TransactionDTO> transactions) {
+        String filename = "transactions.csv";
+        Path file = Paths.get(filename);
+        String json;
+        try {
+            json = objectMapper.writeValueAsString(transactions);
+            HttpRequest request = addAuth(HttpRequest.newBuilder())
+                    .uri(URI.create(BASE_URL + "/csv"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(json)).build();
+            HttpResponse<byte[]> response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            if (response.statusCode() == 200) {
+                Files.write(file, response.body());
+                return true;
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public void updateTransaction(TransactionDTO transactionDTO) {

@@ -80,6 +80,7 @@ public class HelloApplication extends Application {
         //Buttons
         Button add = new Button("+");
         Button ok = new Button("OK");
+        Button export = new Button("Export");
 
         //Texts
         Text title = new Text("TRANSACTIONS");
@@ -142,6 +143,12 @@ public class HelloApplication extends Application {
             controller.createTransaction();
         });
 
+        export.setOnAction(e -> {
+            if (transactionService.csvExport(transactions)) {
+                controller.successfulExport();
+            }
+        });
+
         //Filter by choicebox
         ChoiceBox<String> filters = new ChoiceBox<String>();
         filters.setPrefWidth(200);
@@ -184,6 +191,7 @@ public class HelloApplication extends Application {
         gridPane.setAlignment(Pos.CENTER);
         gridPane.add(box, 0, 0);
         gridPane.add(filter, 1, 0);
+        gridPane.add(export, 0, 1);
 
         Scene scene = new Scene(gridPane, 700, 500);
         primaryStage.setScene(scene);

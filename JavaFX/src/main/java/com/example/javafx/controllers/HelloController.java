@@ -5,10 +5,12 @@ import com.example.javafx.models.TransactionDTO;
 import com.example.javafx.models.TransactionType;
 import com.example.javafx.services.TransactionService;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -210,6 +212,17 @@ public class HelloController {
             stage.close();
         });
 
+        stage.show();
+    }
+
+    public void successfulExport() {
+        Text text = new Text("Transactions successfully exported");
+        VBox vBox = new VBox(text);
+        vBox.setAlignment(Pos.CENTER);
+        Scene scene = new Scene(vBox, 200, 50);
+        Stage stage = new Stage();
+        stage.setTitle("Export successful");
+        stage.setScene(scene);
         stage.show();
     }
 }
