@@ -317,4 +317,64 @@ public class TransactionServiceTest {
         String result = new String(resource.getByteArray(), StandardCharsets.UTF_8);
         assertEquals(expected, result);
     }
+
+    @Test
+    void CSVContentTest_specialComment() {
+        TransactionDTO transactionDTO = new TransactionDTO();
+        transactionDTO.setType(TransactionType.EXPENSE);
+        transactionDTO.setDate(LocalDate.of(2025, 12, 1));
+        transactionDTO.setAmount(2000L);
+        transactionDTO.setCategory(Category.GROCERIES);
+        transactionDTO.setComment("kenyer,tojas");
+        List<TransactionDTO> list = List.of(transactionDTO);
+        String expected = "Type,Amount,Date,Category,Comment\n" + "EXPENSE,2000,2025-12-01,GROCERIES,\"kenyer,tojas\"\n";
+        ByteArrayResource resource = underTest.CSVcontent(list);
+        String result = new String(resource.getByteArray(), StandardCharsets.UTF_8);
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void CSVContentTest_specialComment2() {
+        TransactionDTO transactionDTO = new TransactionDTO();
+        transactionDTO.setType(TransactionType.EXPENSE);
+        transactionDTO.setDate(LocalDate.of(2025, 12, 1));
+        transactionDTO.setAmount(2000L);
+        transactionDTO.setCategory(Category.GROCERIES);
+        transactionDTO.setComment("kenyer\rtojas");
+        List<TransactionDTO> list = List.of(transactionDTO);
+        String expected = "Type,Amount,Date,Category,Comment\n" + "EXPENSE,2000,2025-12-01,GROCERIES,\"kenyer\rtojas\"\n";
+        ByteArrayResource resource = underTest.CSVcontent(list);
+        String result = new String(resource.getByteArray(), StandardCharsets.UTF_8);
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void CSVContentTest_specialComment3() {
+        TransactionDTO transactionDTO = new TransactionDTO();
+        transactionDTO.setType(TransactionType.EXPENSE);
+        transactionDTO.setDate(LocalDate.of(2025, 12, 1));
+        transactionDTO.setAmount(2000L);
+        transactionDTO.setCategory(Category.GROCERIES);
+        transactionDTO.setComment("kenyer\ntojas");
+        List<TransactionDTO> list = List.of(transactionDTO);
+        String expected = "Type,Amount,Date,Category,Comment\n" + "EXPENSE,2000,2025-12-01,GROCERIES,\"kenyer\ntojas\"\n";
+        ByteArrayResource resource = underTest.CSVcontent(list);
+        String result = new String(resource.getByteArray(), StandardCharsets.UTF_8);
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void CSVContentTest_nullValues() {
+        TransactionDTO transactionDTO = new TransactionDTO();
+        transactionDTO.setType(null);
+        transactionDTO.setDate(null);
+        transactionDTO.setAmount(2000L);
+        transactionDTO.setCategory(null);
+        transactionDTO.setComment(null);
+        List<TransactionDTO> list = List.of(transactionDTO);
+        String expected = "Type,Amount,Date,Category,Comment\n" + ",2000,,,\n";
+        ByteArrayResource resource = underTest.CSVcontent(list);
+        String result = new String(resource.getByteArray(), StandardCharsets.UTF_8);
+        assertEquals(expected, result);
+    }
 }

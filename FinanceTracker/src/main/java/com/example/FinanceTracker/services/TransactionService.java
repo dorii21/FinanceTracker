@@ -123,7 +123,7 @@ public class TransactionService {
             if (comment == null) {
                 comment = "";
             }
-            if (comment.contains(",") || comment.contains("\"") || comment.contains("\n") || comment.contains("\r")) {
+            if (comment.contains(",") || comment.contains("\n") || comment.contains("\r")) {
                 comment = "\"" + comment.replace("\"", "\"\"") + "\"";
             }
             String type = transactionDTO.getType() != null ? transactionDTO.getType().toString() : "";
