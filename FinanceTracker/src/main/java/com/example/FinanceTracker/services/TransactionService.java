@@ -117,7 +117,7 @@ public class TransactionService {
 
     public ByteArrayResource CSVcontent(List<TransactionDTO> transactions) {
         StringBuilder content = new StringBuilder();
-        content.append("Type,Amount,Date,Category,Comment");
+        content.append("Type,Amount,Date,Category,Comment\n");
         for (TransactionDTO transactionDTO : transactions) {
             String comment = transactionDTO.getComment();
             if (comment == null) {
