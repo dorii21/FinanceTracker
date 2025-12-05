@@ -182,10 +182,19 @@ public class HelloController {
                 Category.GIFT,
                 Category.PHONE,
                 Category.OTHER);
-
+        categoryField.setDisable(true);
+        categoryField.setValue(null);
         TextField commentField = new TextField();
         ChoiceBox<TransactionType> typeField = new ChoiceBox<>();
         typeField.getItems().addAll(TransactionType.EXPENSE, TransactionType.INCOME);
+        typeField.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue.equals(TransactionType.EXPENSE)) {
+                categoryField.setDisable(false);
+            }else if(newValue.equals(TransactionType.INCOME)) {
+                categoryField.setDisable(true);
+                categoryFilter.setValue(null);
+            }
+        });
         Button createButton = new Button("Create");
 
         GridPane gridPane = new GridPane();

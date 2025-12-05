@@ -1,7 +1,9 @@
 package com.example.FinanceTracker.services;
 
+import com.example.FinanceTracker.dtos.ResponseUserDTO;
 import com.example.FinanceTracker.dtos.UserDTO;
 import com.example.FinanceTracker.entities.UserEntity;
+import com.example.FinanceTracker.exceptions.UserAlreadyExistsException;
 import com.example.FinanceTracker.mappers.UserMapper;
 import com.example.FinanceTracker.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,11 +18,14 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
-    public UserDTO register(UserDTO userDTO) {
+    public ResponseUserDTO register(UserDTO userDTO) throws UserAlreadyExistsException {
+        if(userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
+            throw new UserAlreadyExistsException("User already exists");
+        }
         UserEntity userEntity = userMapper.toUserEntity(userDTO);
         String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
         userEntity.setPassword(encodedPassword);
         UserEntity savedUserEntity = userRepository.save(userEntity);
-        return userMapper.toUserDTO(savedUserEntity);
+        return userMapper.toResponseUserDTO(savedUserEntity);
     }
 }

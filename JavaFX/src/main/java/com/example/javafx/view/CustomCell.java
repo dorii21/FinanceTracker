@@ -13,8 +13,10 @@ public class CustomCell extends ListCell<TransactionDTO> {
         } else {
             if (item.getType().equals(TransactionType.EXPENSE)) {
                 setText("-" + item.getAmount().toString());
+                setStyle("-fx-text-fill: red;");
             } else {
                 setText("+" + item.getAmount().toString());
+                setStyle("-fx-text-fill: green;");
             }
         }
     }

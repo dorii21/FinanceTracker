@@ -1,5 +1,6 @@
 package com.example.FinanceTracker.mappers;
 
+import com.example.FinanceTracker.dtos.ResponseUserDTO;
 import com.example.FinanceTracker.dtos.UserDTO;
 import com.example.FinanceTracker.entities.UserEntity;
 import org.mapstruct.Mapper;
@@ -8,5 +9,5 @@ import org.mapstruct.Mapper;
 public interface UserMapper {
     UserEntity toUserEntity(UserDTO userDTO);
 
-    UserDTO toUserDTO(UserEntity userEntity);
+    ResponseUserDTO toResponseUserDTO(UserEntity userEntity);
 }

@@ -6,6 +6,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 public class LoginController {
     private final Label message;
@@ -19,7 +20,13 @@ public class LoginController {
     }
 
     public void handleLoginButton(String email, String password) {
-        boolean loggedIn = userService.login(email, password);
+        if(email.isEmpty() || password.isBlank()) {
+            String msg="Email and password cannot be blank";
+            message.setText(msg);
+            showAlert(Alert.AlertType.WARNING, msg);
+            return;
+        }
+        userService.login(email, password);
         if (loggedIn) {
             message.setText("Logged in successfully");
             onSuccess.run();
@@ -30,11 +37,17 @@ public class LoginController {
     }
 
     public void handleRegisterButton(String email, String password, String firstName, String lastName) {
+        if(email.isEmpty() || password.isBlank()) {
+            String msg="Email and password cannot be blank";
+            message.setText(msg);
+            showAlert(Alert.AlertType.WARNING, msg);
+            return;
+        }
         UserDTO userDTO = new UserDTO(email, password, firstName, lastName);
         try {
             userService.register(userDTO);
             message.setText("User registered successfully");
-            onSuccess.run();
+            showAlert(Alert.AlertType.INFORMATION, message.getText());
         } catch (IOException e) {
             Alert.AlertType alertType;
             if (e.getMessage().equals("Username already exists")) {
