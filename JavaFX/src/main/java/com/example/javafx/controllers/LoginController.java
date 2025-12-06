@@ -41,7 +41,7 @@ public class LoginController {
             showAlert(Alert.AlertType.WARNING, msg);
             return;
         }
-        UserDTO userDTO = new UserDTO(email, password, firstName, lastName);
+        UserDTO userDTO = new UserDTO(email, firstName, lastName, password);
         try {
             userService.register(userDTO);
             message.setText("User registered successfully");

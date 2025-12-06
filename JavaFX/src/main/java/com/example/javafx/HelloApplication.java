@@ -12,11 +12,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -112,12 +111,17 @@ public class HelloApplication extends Application {
                 Category.GIFT,
                 Category.PHONE,
                 Category.OTHER);
-        HBox amountFilter = new HBox();
+        categoryFilter.setPrefWidth(200);
+        HBox amountFilter = new HBox(5);
         amountFilter.getChildren().addAll(new Label("min:"), minAmount, new Label("max:"), maxAmount);
+        amountFilter.setAlignment(Pos.CENTER_LEFT);
         HBox dateFilter = new HBox();
         dateFilter.getChildren().addAll(new Label("min:"), minDate, new Label("max:"), maxDate);
+        dateFilter.setAlignment(Pos.CENTER_LEFT);
         VBox filter = new VBox(10);
-        filter.setStyle("-fx-background-color: #D3D3D3;");
+        filter.setStyle("-fx-background-color: #D3D3D3;-fx-padding: 10;-fx-border-radius: 5;-fx-background-radius: 5;");
+        filter.setMaxHeight(Region.USE_PREF_SIZE);
+
         amountFilter.setVisible(false);
         amountFilter.setManaged(false);
         dateFilter.setVisible(false);
@@ -129,7 +133,7 @@ public class HelloApplication extends Application {
 
         ObservableList<TransactionDTO> transactions = FXCollections.observableArrayList();
         ListView<TransactionDTO> listView = new ListView<>(transactions);
-
+        listView.setStyle("-fx-focus-color: transparent;-fx-faint-focus-color: transparent;-fx-border-color: #D1E5F4;-fx-border-radius: 5;");
 
         HelloController controller = new HelloController(amountFilter, dateFilter, categoryFilter, ok, transactionService, transactions);
         transactions.setAll(transactionService.listTransactions());
@@ -180,23 +184,34 @@ public class HelloApplication extends Application {
         });
 
         //Left side
-        HBox header = new HBox(140);
-        header.getChildren().addAll(title, add);
+        HBox hbox = new HBox(10);
+        hbox.getChildren().addAll(export, add);
         VBox box = new VBox();
-        box.getChildren().addAll(header, listView);
+        box.getChildren().addAll(title, listView);
 
         //Alignment
         GridPane gridPane = new GridPane();
-        gridPane.setMinSize(500, 500);
-        gridPane.setPadding(new Insets(10, 10, 10, 10));
-        gridPane.setVgap(5);
+        gridPane.setMinSize(700, 500);
+        gridPane.setPadding(new Insets(20));
+        gridPane.setVgap(10);
         gridPane.setHgap(20);
-        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setAlignment(Pos.TOP_CENTER);
+
+        ColumnConstraints column1 = new ColumnConstraints();
+        column1.setHgrow(Priority.NEVER);
+        column1.setPercentWidth(35);
+        ColumnConstraints column2 = new ColumnConstraints();
+        column2.setHgrow(Priority.NEVER);
+        column2.setPercentWidth(65);
+        gridPane.getColumnConstraints().addAll(column1, column2);
+
         gridPane.add(box, 0, 0);
         gridPane.add(filter, 1, 0);
-        gridPane.add(export, 0, 1);
+        GridPane.setValignment(filter, VPos.TOP);
+        GridPane.setValignment(box, VPos.TOP);
+        gridPane.add(hbox, 0, 1);
 
-        Scene scene = new Scene(gridPane, 700, 500);
+        Scene scene = new Scene(gridPane, 900, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
