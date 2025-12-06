@@ -39,15 +39,17 @@ public class HelloApplication extends Application {
     private void loginView() {
         VBox loginBox = new VBox();
         Text loginLabel = new Text("Login");
+        loginLabel.setStyle("-fx-font-weight: bold;-fx-font-size: 12px;");
         Text email = new Text("Email:");
         Text password = new Text("Password:");
         TextField emailField = new TextField();
         PasswordField passwordField = new PasswordField();
         Button loginButton = new Button("Login");
-        loginBox.getChildren().addAll(loginLabel, email, emailField, password, passwordField, loginButton);
+        loginBox.getChildren().addAll(email, emailField, password, passwordField, loginButton);
 
         VBox registerBox = new VBox();
         Text registerLabel = new Text("Register");
+        registerLabel.setStyle("-fx-font-weight: bold;-fx-font-size: 12px;");
         Text firstName = new Text("First Name:");
         Text lastName = new Text("Last Name:");
         Text regEmail = new Text("Email:");
@@ -57,10 +59,16 @@ public class HelloApplication extends Application {
         TextField registerEmail = new TextField();
         PasswordField registerPassword = new PasswordField();
         Button registerButton = new Button("Register");
-        registerBox.getChildren().addAll(registerLabel, firstName, firstNameField, lastName, lastNameField, regEmail, registerEmail, regPassword, registerPassword, registerButton);
+        registerBox.getChildren().addAll(firstName, firstNameField, lastName, lastNameField, regEmail, registerEmail, regPassword, registerPassword, registerButton);
 
-        HBox hbox = new HBox();
-        hbox.getChildren().addAll(loginBox, registerBox);
+        GridPane gridPane = new GridPane();
+        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(loginLabel, 0, 0);
+        gridPane.add(registerLabel, 1, 0);
+        gridPane.add(loginBox, 0, 1);
+        gridPane.add(registerBox, 1, 1);
 
         Label messageLabel = new Label();
 
@@ -74,7 +82,7 @@ public class HelloApplication extends Application {
         registerButton.setOnAction(e -> {
             loginController.handleRegisterButton(registerEmail.getText(), registerPassword.getText(), firstNameField.getText(), lastNameField.getText());
         });
-        Scene scene = new Scene(hbox, 300, 300);
+        Scene scene = new Scene(gridPane, 350, 300);
         primaryStage.setScene(scene);
     }
 
@@ -86,6 +94,7 @@ public class HelloApplication extends Application {
 
         //Texts
         Text title = new Text("TRANSACTIONS");
+        title.setStyle("-fx-font-weight: bold;-fx-font-size: 18px;-fx-font-family:'Montserrat';");
         Text filterBy = new Text("Filter by");
 
         //Filter by textfield/datepicker
@@ -119,7 +128,7 @@ public class HelloApplication extends Application {
         dateFilter.getChildren().addAll(new Label("min:"), minDate, new Label("max:"), maxDate);
         dateFilter.setAlignment(Pos.CENTER_LEFT);
         VBox filter = new VBox(10);
-        filter.setStyle("-fx-background-color: #D3D3D3;-fx-padding: 10;-fx-border-radius: 5;-fx-background-radius: 5;");
+        filter.setStyle("-fx-background-color: #D1E5F4;-fx-padding: 10;-fx-border-radius: 5;-fx-background-radius: 5;-fx-border-color: #9ABDDC;-fx-padding: 10;");
         filter.setMaxHeight(Region.USE_PREF_SIZE);
 
         amountFilter.setVisible(false);
@@ -133,7 +142,7 @@ public class HelloApplication extends Application {
 
         ObservableList<TransactionDTO> transactions = FXCollections.observableArrayList();
         ListView<TransactionDTO> listView = new ListView<>(transactions);
-        listView.setStyle("-fx-focus-color: transparent;-fx-faint-focus-color: transparent;-fx-border-color: #D1E5F4;-fx-border-radius: 5;");
+        listView.setStyle("-fx-focus-color: transparent;-fx-faint-focus-color: transparent;");
 
         HelloController controller = new HelloController(amountFilter, dateFilter, categoryFilter, ok, transactionService, transactions);
         transactions.setAll(transactionService.listTransactions());
@@ -186,8 +195,6 @@ public class HelloApplication extends Application {
         //Left side
         HBox hbox = new HBox(10);
         hbox.getChildren().addAll(export, add);
-        VBox box = new VBox();
-        box.getChildren().addAll(title, listView);
 
         //Alignment
         GridPane gridPane = new GridPane();
@@ -205,11 +212,13 @@ public class HelloApplication extends Application {
         column2.setPercentWidth(65);
         gridPane.getColumnConstraints().addAll(column1, column2);
 
-        gridPane.add(box, 0, 0);
-        gridPane.add(filter, 1, 0);
+        gridPane.add(title, 0, 0);
+        gridPane.add(filter, 1, 1);//column row
+        gridPane.add(listView, 0, 1);
         GridPane.setValignment(filter, VPos.TOP);
-        GridPane.setValignment(box, VPos.TOP);
-        gridPane.add(hbox, 0, 1);
+        gridPane.add(hbox, 1, 0);
+        hbox.setAlignment(Pos.CENTER_RIGHT);
+        gridPane.setStyle("-fx-background-color: #E5F3FD;");
 
         Scene scene = new Scene(gridPane, 900, 600);
         primaryStage.setScene(scene);

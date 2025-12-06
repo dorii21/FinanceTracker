@@ -5,6 +5,7 @@ import com.example.javafx.models.TransactionDTO;
 import com.example.javafx.models.TransactionType;
 import com.example.javafx.services.TransactionService;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -143,6 +144,9 @@ public class HelloController {
         });
 
         GridPane gridPane = new GridPane();
+        gridPane.setVgap(10);
+        gridPane.setHgap(10);
+        gridPane.setPadding(new Insets(10));
         gridPane.add(amount, 0, 0);
         gridPane.add(amountField, 1, 0);
         gridPane.add(date, 0, 1);
@@ -153,7 +157,7 @@ public class HelloController {
         gridPane.add(commentField, 1, 3);
         gridPane.add(delete, 0, 4);
         gridPane.add(save, 1, 4);
-        Scene scene = new Scene(gridPane, 200, 200);
+        Scene scene = new Scene(gridPane, 300, 200);
         newStage.setTitle(transaction.getType().toString());
         newStage.setScene(scene);
         newStage.show();
@@ -199,6 +203,9 @@ public class HelloController {
         Button createButton = new Button("Create");
 
         GridPane gridPane = new GridPane();
+        gridPane.setVgap(10);
+        gridPane.setHgap(10);
+        gridPane.setPadding(new Insets(10));
         gridPane.add(amount, 0, 0);
         gridPane.add(amountField, 1, 0);
         gridPane.add(date, 0, 1);
@@ -210,7 +217,7 @@ public class HelloController {
         gridPane.add(type, 0, 4);
         gridPane.add(typeField, 1, 4);
         gridPane.add(createButton, 0, 5);
-        Scene scene = new Scene(gridPane, 200, 200);
+        Scene scene = new Scene(gridPane, 300, 200);
         Stage stage = new Stage();
         stage.setTitle("Add transaction");
         stage.setScene(scene);

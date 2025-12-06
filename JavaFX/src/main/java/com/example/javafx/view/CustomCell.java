@@ -12,11 +12,11 @@ public class CustomCell extends ListCell<TransactionDTO> {
             setText(null);
         } else {
             if (item.getType().equals(TransactionType.EXPENSE)) {
-                setText("-" + item.getAmount().toString() +" Ft");
-                setStyle("-fx-text-fill: red;-fx-font-weight: bold;-fx-font-size: 12px;-fx-padding: 10px;-fx-background-color: transparent;-fx-focus-color:transparent");
+                setText("-" + item.getAmount().toString() + " Ft");
+                setStyle("-fx-text-fill: red;-fx-font-weight: bold;-fx-font-size: 12px;-fx-background-color: transparent;-fx-focus-color:transparent");
             } else {
-                setText("+" + item.getAmount().toString()+" Ft");
-                setStyle("-fx-text-fill: green;-fx-font-weight: bold;-fx-font-size: 12px;-fx-padding: 10px;-fx-background-color: transparent;-fx-focus-color:transparent");
+                setText("+" + item.getAmount().toString() + " Ft");
+                setStyle("-fx-text-fill: green;-fx-font-weight: bold;-fx-font-size: 12px;-fx-background-color: transparent;-fx-focus-color:transparent");
             }
             setPrefHeight(40);
         }
