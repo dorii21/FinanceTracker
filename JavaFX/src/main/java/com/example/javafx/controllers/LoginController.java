@@ -6,39 +6,37 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 
 import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
 
 public class LoginController {
     private final Label message;
     private final UserService userService;
-    private final Runnable onSuccess;
 
-    public LoginController(UserService userService, Runnable onSuccess, Label message) {
+    public LoginController(UserService userService, Label message) {
         this.userService = userService;
-        this.onSuccess = onSuccess;
         this.message = message;
     }
 
-    public void handleLoginButton(String email, String password) {
-        if(email.isEmpty() || password.isBlank()) {
-            String msg="Email and password cannot be blank";
+    public boolean handleLoginButton(String email, String password) {
+        boolean loggedIn = userService.login(email, password);
+        if (email.isEmpty() || password.isBlank()) {
+            String msg = "Email and password cannot be blank";
             message.setText(msg);
             showAlert(Alert.AlertType.WARNING, msg);
-            return;
+            return false;
         }
         userService.login(email, password);
         if (loggedIn) {
             message.setText("Logged in successfully");
-            onSuccess.run();
         } else {
             message.setText("Incorrect email or password");
             showAlert(Alert.AlertType.ERROR, message.getText());
         }
+        return loggedIn;
     }
 
     public void handleRegisterButton(String email, String password, String firstName, String lastName) {
-        if(email.isEmpty() || password.isBlank()) {
-            String msg="Email and password cannot be blank";
+        if (email.isEmpty() || password.isBlank()) {
+            String msg = "Email and password cannot be blank";
             message.setText(msg);
             showAlert(Alert.AlertType.WARNING, msg);
             return;
@@ -50,7 +48,7 @@ public class LoginController {
             showAlert(Alert.AlertType.INFORMATION, message.getText());
         } catch (IOException e) {
             Alert.AlertType alertType;
-            if (e.getMessage().equals("Username already exists")) {
+            if (e.getMessage().equals("User already exists")) {
                 alertType = Alert.AlertType.WARNING;
             } else {
                 alertType = Alert.AlertType.ERROR;

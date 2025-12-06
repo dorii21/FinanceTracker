@@ -38,7 +38,6 @@ public class UserService {
         } else {
             throw new IOException("Server error (Status: " + response.statusCode() + ")");
         }
-
     }
 
     public boolean login(String email, String password) {

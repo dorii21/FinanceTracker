@@ -121,6 +121,7 @@ public class HelloController {
         } else
             commentField = new TextField();
 
+        if (transaction.getType().equals(TransactionType.INCOME)) categoryField.setDisable(true);
 
         save.setOnAction(event -> {
             if (!amountField.getText().isBlank()) {
@@ -188,9 +189,9 @@ public class HelloController {
         ChoiceBox<TransactionType> typeField = new ChoiceBox<>();
         typeField.getItems().addAll(TransactionType.EXPENSE, TransactionType.INCOME);
         typeField.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue.equals(TransactionType.EXPENSE)) {
+            if (newValue.equals(TransactionType.EXPENSE)) {
                 categoryField.setDisable(false);
-            }else if(newValue.equals(TransactionType.INCOME)) {
+            } else if (newValue.equals(TransactionType.INCOME)) {
                 categoryField.setDisable(true);
                 categoryFilter.setValue(null);
             }

@@ -65,9 +65,12 @@ public class HelloApplication extends Application {
 
         Label messageLabel = new Label();
 
-        LoginController loginController = new LoginController(userService, this::transactionView, messageLabel);
+        LoginController loginController = new LoginController(userService, messageLabel);
         loginButton.setOnAction(e -> {
-            loginController.handleLoginButton(emailField.getText(), passwordField.getText());
+            boolean loggedIn = loginController.handleLoginButton(emailField.getText(), passwordField.getText());
+            if (loggedIn) {
+                transactionView();
+            }
         });
         registerButton.setOnAction(e -> {
             loginController.handleRegisterButton(registerEmail.getText(), registerPassword.getText(), firstNameField.getText(), lastNameField.getText());
