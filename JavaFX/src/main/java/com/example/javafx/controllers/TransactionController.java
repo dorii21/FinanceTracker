@@ -4,6 +4,7 @@ import com.example.javafx.models.Category;
 import com.example.javafx.models.TransactionDTO;
 import com.example.javafx.models.TransactionType;
 import com.example.javafx.services.TransactionService;
+import com.example.javafx.view.TransactionView;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -15,21 +16,67 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class HelloController {
-    private HBox amountFilter;
-    private HBox dateFilter;
-    private ChoiceBox<Category> categoryFilter;
-    private Button ok;
-    private TransactionService transactionService;
-    private ObservableList<TransactionDTO> transactions;
+public class TransactionController {
+    private final TransactionView transactionView;
+    private final ObservableList<TransactionDTO> transactions;
+    private final TransactionService transactionService;
+    private final TextField minAmountField;
+    private final TextField maxAmountField;
+    private final DatePicker minDateField;
+    private final DatePicker maxDateField;
+    private final ChoiceBox<Category> categoryFilter;
+    private final Button ok;
+    private final ChoiceBox<String> filters;
+    private final HBox amountFilter;
+    private final HBox dateFilter;
 
-    public HelloController(HBox amountFilter, HBox dateFilter, ChoiceBox<Category> categoryFilter, Button ok, TransactionService transactionService, ObservableList<TransactionDTO> transactions) {
-        this.amountFilter = amountFilter;
-        this.dateFilter = dateFilter;
-        this.categoryFilter = categoryFilter;
-        this.ok = ok;
+    public TransactionController(TransactionService transactionService, TransactionView transactionView) {
         this.transactionService = transactionService;
-        this.transactions = transactions;
+        this.transactionView = transactionView;
+        this.transactions = transactionView.getTransactionList();
+        this.categoryFilter = transactionView.getCategoryFilter();
+        this.ok = transactionView.getOk();
+        this.filters = transactionView.getFilters();
+        this.amountFilter = transactionView.getAmountFilter();
+        this.dateFilter = transactionView.getDateFilter();
+        this.minAmountField = (TextField) amountFilter.getChildren().get(1);
+        this.maxAmountField = (TextField) amountFilter.getChildren().get(3);
+        this.minDateField = (DatePicker) dateFilter.getChildren().get(1);
+        this.maxDateField = (DatePicker) dateFilter.getChildren().get(3);
+        transactions.setAll(transactionService.listTransactions());
+
+        filters.setOnAction(event -> {
+            choiceBoxSelection(filters.getValue());
+        });
+        ok.setOnAction(event -> {
+            if (filters.getValue().equals("Category")) {
+                transactions.setAll(transactionService.filterByCategory(categoryFilter.getValue()));
+            } else if (filters.getValue().equals("Amount")) {
+                transactions.setAll(transactionService.filterByAmount(Long.valueOf(minAmountField.getText()), Long.valueOf(maxAmountField.getText())));
+            } else if (filters.getValue().equals("Date")) {
+                transactions.setAll(transactionService.filterByDate(minDateField.getValue(), maxDateField.getValue()));
+            } else if (filters.getValue().equals("Expense only")) {
+                transactions.setAll(transactionService.filterByExpense());
+            } else if (filters.getValue().equals("Income only")) {
+                transactions.setAll(transactionService.filterByIncome());
+            } else {
+                transactions.setAll(transactionService.listTransactions());
+            }
+        });
+        transactionView.getAdd().setOnAction(event -> {
+            createTransaction();
+        });
+        transactionView.getExport().setOnAction(event -> {
+            if (transactionService.csvExport(transactions)) {
+                successfulExport();
+            }
+        });
+        transactionView.getListView().setOnMouseClicked(event -> {
+            TransactionDTO selected = transactionView.getListView().getSelectionModel().getSelectedItem();
+            if (selected != null && event.getClickCount() == 2) {
+                editTransaction(selected);
+            }
+        });
     }
 
     public void choiceBoxSelection(String choice) {

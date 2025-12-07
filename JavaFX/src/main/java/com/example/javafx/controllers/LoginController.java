@@ -2,18 +2,39 @@ package com.example.javafx.controllers;
 
 import com.example.javafx.models.UserDTO;
 import com.example.javafx.services.UserService;
+import com.example.javafx.view.LoginView;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public class LoginController {
     private final Label message;
     private final UserService userService;
+    private LoginView loginView;
+    private final Stage stage;
+    private final TransactionController transactionController;
+    private final Runnable onSuccess;
 
-    public LoginController(UserService userService, Label message) {
+    public LoginController(UserService userService, Label message, LoginView loginView, Stage stage, TransactionController transactionController, Runnable onSuccess) {
         this.userService = userService;
         this.message = message;
+        this.loginView = loginView;
+        this.stage = stage;
+        this.transactionController = transactionController;
+        this.onSuccess = onSuccess;
+
+        loginView.getLoginButton().setOnAction(event -> {
+            boolean loggedIn = handleLoginButton(loginView.getEmailField().getText(), loginView.getPasswordField().getText());
+            if (loggedIn) {
+                onSuccess.run();
+            }
+        });
+
+        loginView.getRegisterButton().setOnAction(e -> {
+            handleRegisterButton(loginView.getRegisterEmail().getText(), loginView.getRegisterPassword().getText(), loginView.getFirstNameField().getText(), loginView.getLastNameField().getText());
+        });
     }
 
     public boolean handleLoginButton(String email, String password) {
