@@ -70,7 +70,7 @@ public class TransactionService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         Long userId = user.getId();
-        TransactionEntity transactionEntity = transactionRepository.findByIdAndUserId(id, userId)
+        transactionRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new TransactionNotFoundException("Transaction not found"));
         transactionRepository.deleteById(id);
     }

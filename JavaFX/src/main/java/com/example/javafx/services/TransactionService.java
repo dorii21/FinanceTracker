@@ -66,7 +66,7 @@ public class TransactionService {
             json = objectMapper.writeValueAsString(transactions);
             HttpRequest request = addAuth(HttpRequest.newBuilder())
                     .uri(URI.create(BASE_URL + "/csv"))
-                    .header("Content-Type", "application/json")
+                    .header("Content-Type", "application/json;charset=UTF-8")
                     .POST(HttpRequest.BodyPublishers.ofString(json)).build();
             HttpResponse<byte[]> response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
             if (response.statusCode() == 200) {
