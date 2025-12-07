@@ -17,7 +17,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class TransactionController {
-    private final TransactionView transactionView;
     private final ObservableList<TransactionDTO> transactions;
     private final TransactionService transactionService;
     private final TextField minAmountField;
@@ -26,16 +25,21 @@ public class TransactionController {
     private final DatePicker maxDateField;
     private final ChoiceBox<Category> categoryFilter;
     private final Button ok;
+    private final Button add;
+    private final Button export;
+    private final ListView<TransactionDTO> listView;
     private final ChoiceBox<String> filters;
     private final HBox amountFilter;
     private final HBox dateFilter;
 
     public TransactionController(TransactionService transactionService, TransactionView transactionView) {
         this.transactionService = transactionService;
-        this.transactionView = transactionView;
         this.transactions = transactionView.getTransactionList();
         this.categoryFilter = transactionView.getCategoryFilter();
         this.ok = transactionView.getOk();
+        this.add = transactionView.getAdd();
+        this.export = transactionView.getExport();
+        this.listView = transactionView.getListView();
         this.filters = transactionView.getFilters();
         this.amountFilter = transactionView.getAmountFilter();
         this.dateFilter = transactionView.getDateFilter();
@@ -63,16 +67,16 @@ public class TransactionController {
                 transactions.setAll(transactionService.listTransactions());
             }
         });
-        transactionView.getAdd().setOnAction(event -> {
+        add.setOnAction(event -> {
             createTransaction();
         });
-        transactionView.getExport().setOnAction(event -> {
+        export.setOnAction(event -> {
             if (transactionService.csvExport(transactions)) {
                 successfulExport();
             }
         });
-        transactionView.getListView().setOnMouseClicked(event -> {
-            TransactionDTO selected = transactionView.getListView().getSelectionModel().getSelectedItem();
+        listView.setOnMouseClicked(event -> {
+            TransactionDTO selected = listView.getSelectionModel().getSelectedItem();
             if (selected != null && event.getClickCount() == 2) {
                 editTransaction(selected);
             }
@@ -264,7 +268,7 @@ public class TransactionController {
         gridPane.add(type, 0, 4);
         gridPane.add(typeField, 1, 4);
         gridPane.add(createButton, 0, 5);
-        Scene scene = new Scene(gridPane, 300, 200);
+        Scene scene = new Scene(gridPane, 300, 250);
         Stage stage = new Stage();
         stage.setTitle("Add transaction");
         stage.setScene(scene);

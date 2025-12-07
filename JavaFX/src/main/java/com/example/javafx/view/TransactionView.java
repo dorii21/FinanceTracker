@@ -22,7 +22,7 @@ public class TransactionView {
     private final DatePicker minDate = new DatePicker();
     private final DatePicker maxDate = new DatePicker();
     private final ChoiceBox<Category> categoryFilter = new ChoiceBox<>();
-    private final ChoiceBox<String> filters = new ChoiceBox<String>();
+    private final ChoiceBox<String> filters = new ChoiceBox<>();
     private final HBox amountFilter;
     private final HBox dateFilter;
     private final VBox filter;
@@ -58,7 +58,7 @@ public class TransactionView {
         dateFilter.setAlignment(Pos.CENTER_LEFT);
 
         filter = new VBox(10);
-        filter.setStyle("-fx-background-color: #D1E5F4;-fx-padding: 10;-fx-border-radius: 5;-fx-background-radius: 5;-fx-border-color: #9ABDDC;-fx-padding: 10;");
+        filter.setStyle("-fx-background-color: #D1E5F4;-fx-padding: 10;-fx-border-radius: 5;-fx-background-radius: 5;-fx-border-color: #9ABDDC;");
         filter.setMaxHeight(Region.USE_PREF_SIZE);
 
         amountFilter.setVisible(false);

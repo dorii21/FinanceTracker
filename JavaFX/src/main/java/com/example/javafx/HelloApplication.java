@@ -12,8 +12,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-
 public class HelloApplication extends Application {
     private UserService userService;
     private TransactionService transactionService;
@@ -23,7 +21,7 @@ public class HelloApplication extends Application {
     private Label message;
 
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) {
         this.primaryStage = stage;
         stage.setTitle("Finance Tracker");
         this.userService = new UserService();
@@ -31,8 +29,7 @@ public class HelloApplication extends Application {
         this.loginView = new LoginView();
         this.transactionView = new TransactionView();
         this.message = new Label();
-        TransactionController transactionController = new TransactionController(transactionService, transactionView);
-        LoginController loginController = new LoginController(userService, message, loginView, stage, transactionController, this::switchView);
+        LoginController loginController = new LoginController(userService, message, loginView, this::switchView);
         GridPane gridPane = loginView.getGridPane();
         Scene scene = new Scene(gridPane, 350, 300);
         stage.setScene(scene);
@@ -41,9 +38,9 @@ public class HelloApplication extends Application {
 
     public void switchView() {
         Scene transactionScene = new Scene(transactionView.getGridPane(), 900, 600);
+        TransactionController transactionController = new TransactionController(transactionService, transactionView);
         primaryStage.setScene(transactionScene);
         primaryStage.show();
-        TransactionController transactionController = new TransactionController(transactionService, transactionView);
     }
 }
 

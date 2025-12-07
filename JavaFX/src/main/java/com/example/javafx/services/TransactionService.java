@@ -45,7 +45,7 @@ public class TransactionService {
                     .GET().build();
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
-                List<TransactionDTO> transactions = objectMapper.readValue(response.body(), new TypeReference<List<TransactionDTO>>() {
+                List<TransactionDTO> transactions = objectMapper.readValue(response.body(), new TypeReference<>() {
                 });
                 return FXCollections.observableArrayList(transactions);
             } else {
@@ -99,9 +99,7 @@ public class TransactionService {
     }
 
     public void deleteTransaction(TransactionDTO transactionDTO) {
-        String json;
         try {
-            json = objectMapper.writeValueAsString(transactionDTO);
             HttpRequest request = addAuth(HttpRequest.newBuilder())
                     .uri(URI.create(BASE_URL + "/" + transactionDTO.getId()))
                     .DELETE().build();
@@ -142,7 +140,7 @@ public class TransactionService {
                     .GET().build();
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
-                List<TransactionDTO> transactions = objectMapper.readValue(response.body(), new TypeReference<List<TransactionDTO>>() {
+                List<TransactionDTO> transactions = objectMapper.readValue(response.body(), new TypeReference<>() {
                 });
                 return FXCollections.observableArrayList(transactions);
             } else {
@@ -162,7 +160,7 @@ public class TransactionService {
                     .GET().build();
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
-                List<TransactionDTO> transactions = objectMapper.readValue(response.body(), new TypeReference<List<TransactionDTO>>() {
+                List<TransactionDTO> transactions = objectMapper.readValue(response.body(), new TypeReference<>() {
                 });
                 return FXCollections.observableArrayList(transactions);
             } else {
@@ -182,7 +180,7 @@ public class TransactionService {
                     .GET().build();
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
-                List<TransactionDTO> transactions = objectMapper.readValue(response.body(), new TypeReference<List<TransactionDTO>>() {
+                List<TransactionDTO> transactions = objectMapper.readValue(response.body(), new TypeReference<>() {
                 });
                 return FXCollections.observableArrayList(transactions);
             } else {
@@ -202,7 +200,7 @@ public class TransactionService {
                     .GET().build();
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
-                List<TransactionDTO> transactions = objectMapper.readValue(response.body(), new TypeReference<List<TransactionDTO>>() {
+                List<TransactionDTO> transactions = objectMapper.readValue(response.body(), new TypeReference<>() {
                 });
                 return FXCollections.observableArrayList(transactions);
             } else {
@@ -222,7 +220,7 @@ public class TransactionService {
                     .GET().build();
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
-                List<TransactionDTO> transactions = objectMapper.readValue(response.body(), new TypeReference<List<TransactionDTO>>() {
+                List<TransactionDTO> transactions = objectMapper.readValue(response.body(), new TypeReference<>() {
                 });
                 return FXCollections.observableArrayList(transactions);
             } else {

@@ -15,7 +15,6 @@ public class UserService {
     private final HttpClient client = HttpClient.newHttpClient();
     private final ObjectMapper mapper = new ObjectMapper();
     private String basicAuthHeader = null;
-    private UserDTO currentUser = null;
 
     public void register(UserDTO user) throws IOException, InterruptedException {
         String json;
@@ -51,7 +50,6 @@ public class UserService {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
-                this.currentUser = new UserDTO(email, null, null, null);
                 return true;
             } else {
                 this.basicAuthHeader = null;

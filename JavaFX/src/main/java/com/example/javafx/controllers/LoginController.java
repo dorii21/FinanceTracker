@@ -5,25 +5,16 @@ import com.example.javafx.services.UserService;
 import com.example.javafx.view.LoginView;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public class LoginController {
     private final Label message;
     private final UserService userService;
-    private LoginView loginView;
-    private final Stage stage;
-    private final TransactionController transactionController;
-    private final Runnable onSuccess;
 
-    public LoginController(UserService userService, Label message, LoginView loginView, Stage stage, TransactionController transactionController, Runnable onSuccess) {
+    public LoginController(UserService userService, Label message, LoginView loginView, Runnable onSuccess) {
         this.userService = userService;
         this.message = message;
-        this.loginView = loginView;
-        this.stage = stage;
-        this.transactionController = transactionController;
-        this.onSuccess = onSuccess;
 
         loginView.getLoginButton().setOnAction(event -> {
             boolean loggedIn = handleLoginButton(loginView.getEmailField().getText(), loginView.getPasswordField().getText());
@@ -46,9 +37,7 @@ public class LoginController {
             return false;
         }
         userService.login(email, password);
-        if (loggedIn) {
-            message.setText("Logged in successfully");
-        } else {
+        if (!loggedIn) {
             message.setText("Incorrect email or password");
             showAlert(Alert.AlertType.ERROR, message.getText());
         }
