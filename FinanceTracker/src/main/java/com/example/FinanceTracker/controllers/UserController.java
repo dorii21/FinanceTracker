@@ -17,12 +17,12 @@ public class UserController {
 
     @PostMapping
     private ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) {
-        try{
-            ResponseUserDTO registeredUser=userService.register(userDTO);
+        try {
+            ResponseUserDTO registeredUser = userService.register(userDTO);
             return ResponseEntity.ok(registeredUser);
-        }catch (UserAlreadyExistsException e){
+        } catch (UserAlreadyExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

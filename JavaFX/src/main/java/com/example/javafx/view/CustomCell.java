@@ -5,6 +5,7 @@ import com.example.javafx.models.TransactionType;
 import javafx.scene.control.ListCell;
 
 public class CustomCell extends ListCell<TransactionDTO> {
+    //set the color of the transaction to green or red based on their type
     @Override
     protected void updateItem(TransactionDTO item, boolean empty) {
         super.updateItem(item, empty);

@@ -16,6 +16,7 @@ public class LoginController {
         this.userService = userService;
         this.message = message;
 
+        //load transaction view in case of correct email and password
         loginView.getLoginButton().setOnAction(event -> {
             boolean loggedIn = handleLoginButton(loginView.getEmailField().getText(), loginView.getPasswordField().getText());
             if (loggedIn) {
@@ -29,14 +30,17 @@ public class LoginController {
     }
 
     public boolean handleLoginButton(String email, String password) {
-        boolean loggedIn = userService.login(email, password);
-        if (email.isEmpty() || password.isBlank()) {
+        //pop up warning if email and/or password fields are empty
+        if (email.isEmpty() || password.isEmpty()) {
             String msg = "Email and password cannot be blank";
             message.setText(msg);
             showAlert(Alert.AlertType.WARNING, msg);
             return false;
         }
-        userService.login(email, password);
+
+        boolean loggedIn = userService.login(email, password);
+
+        //pop up error message in case of incorrect user details
         if (!loggedIn) {
             message.setText("Incorrect email or password");
             showAlert(Alert.AlertType.ERROR, message.getText());
@@ -45,22 +49,27 @@ public class LoginController {
     }
 
     public void handleRegisterButton(String email, String password, String firstName, String lastName) {
-        if (email.isEmpty() || password.isBlank()) {
+        //pop up warning if email and/or password fields are empty
+        if (email.isEmpty() || password.isEmpty()) {
             String msg = "Email and password cannot be blank";
             message.setText(msg);
             showAlert(Alert.AlertType.WARNING, msg);
             return;
         }
+
         UserDTO userDTO = new UserDTO(email, firstName, lastName, password);
+
         try {
             userService.register(userDTO);
             message.setText("User registered successfully");
             showAlert(Alert.AlertType.INFORMATION, message.getText());
         } catch (IOException e) {
+            //pop up warning if user with given email already exists in the database
             Alert.AlertType alertType;
             if (e.getMessage().equals("User already exists")) {
                 alertType = Alert.AlertType.WARNING;
             } else {
+                //error message in case of other exception
                 alertType = Alert.AlertType.ERROR;
             }
             message.setText(e.getMessage());

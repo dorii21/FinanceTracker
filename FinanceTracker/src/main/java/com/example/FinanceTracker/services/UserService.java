@@ -19,10 +19,14 @@ public class UserService {
     private final UserMapper userMapper;
 
     public ResponseUserDTO register(UserDTO userDTO) throws UserAlreadyExistsException {
-        if(userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
+        //check if user already exists
+        if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
             throw new UserAlreadyExistsException("User already exists");
         }
+
         UserEntity userEntity = userMapper.toUserEntity(userDTO);
+
+        //only save the encoded password
         String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
         userEntity.setPassword(encodedPassword);
         UserEntity savedUserEntity = userRepository.save(userEntity);

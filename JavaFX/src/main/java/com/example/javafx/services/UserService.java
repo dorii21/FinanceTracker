@@ -20,15 +20,18 @@ public class UserService {
         String json;
 
         try {
-            json = mapper.writeValueAsString(user);
+            json = mapper.writeValueAsString(user); //convert UserDTO to JSON string
         } catch (IOException e) {
             throw new IOException("Failed to serialize UserDTO", e);
         }
+        //build HTTP POST request to the /register endpoint
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/register"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
+
+        //send request, get response
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() >= 200 && response.statusCode() < 300) {
             return;
@@ -40,18 +43,23 @@ public class UserService {
     }
 
     public boolean login(String email, String password) {
+        //create auth header
         String auth = email + ":" + password;
         this.basicAuthHeader = "Basic " + Base64.getEncoder().encodeToString(auth.getBytes());
+
+        //build GET request to a protected endpoint
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(BASE_URL + "/financetracker"))
-                    .header("Authorization", basicAuthHeader)
+                    .header("Authorization", basicAuthHeader) //add the generated auth header
                     .GET().build();
 
+            //test if username and password are valid
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
                 return true;
             } else {
+                //set auth header to null in case of invalid email and/or password
                 this.basicAuthHeader = null;
                 return false;
             }

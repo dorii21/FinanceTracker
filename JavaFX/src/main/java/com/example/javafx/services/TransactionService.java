@@ -45,6 +45,7 @@ public class TransactionService {
                     .GET().build();
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
+                //deserialize JSON response body
                 List<TransactionDTO> transactions = objectMapper.readValue(response.body(), new TypeReference<>() {
                 });
                 return FXCollections.observableArrayList(transactions);
@@ -82,7 +83,7 @@ public class TransactionService {
     public void updateTransaction(TransactionDTO transactionDTO) {
         String json;
         try {
-            json = objectMapper.writeValueAsString(transactionDTO);
+            json = objectMapper.writeValueAsString(transactionDTO); //serialize transactionDTO  to JSON to send in the request body
             HttpRequest request = addAuth(HttpRequest.newBuilder())
                     .uri(URI.create(BASE_URL + "/" + transactionDTO.getId()))
                     .header("Content-Type", "application/json")

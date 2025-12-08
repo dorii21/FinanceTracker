@@ -31,7 +31,14 @@ public class TransactionView {
     public TransactionView() {
         Text title = new Text("TRANSACTIONS");
         title.setStyle("-fx-font-weight: bold;-fx-font-size: 18px;-fx-font-family:'Montserrat';");
+
         Text filterBy = new Text("Filter by");
+
+        //filter criteria choicebox
+        filters.setPrefWidth(200);
+        filters.getItems().addAll("Category", "Amount", "Date", "Expense only", "Income only", "Show all");
+
+        //input field if category filter is selected
         categoryFilter.getItems().addAll(Category.GROCERIES,
                 Category.HOUSING,
                 Category.TRANSPORTATION,
@@ -49,18 +56,17 @@ public class TransactionView {
                 Category.OTHER);
         categoryFilter.setPrefWidth(200);
 
+        //input fields if amount filter is selected
         amountFilter = new HBox(5);
         amountFilter.getChildren().addAll(new Label("min:"), minAmount, new Label("max:"), maxAmount);
         amountFilter.setAlignment(Pos.CENTER_LEFT);
 
+        //input fields if date filter is selected
         dateFilter = new HBox();
         dateFilter.getChildren().addAll(new Label("min:"), minDate, new Label("max:"), maxDate);
         dateFilter.setAlignment(Pos.CENTER_LEFT);
 
-        filter = new VBox(10);
-        filter.setStyle("-fx-background-color: #D1E5F4;-fx-padding: 10;-fx-border-radius: 5;-fx-background-radius: 5;-fx-border-color: #9ABDDC;");
-        filter.setMaxHeight(Region.USE_PREF_SIZE);
-
+        //hide input fields by default
         amountFilter.setVisible(false);
         amountFilter.setManaged(false);
         dateFilter.setVisible(false);
@@ -70,12 +76,15 @@ public class TransactionView {
         ok.setVisible(false);
         ok.setManaged(false);
 
+        //display transactions in a listview and customize the cells
         this.listView = new ListView<>(transactionList);
         listView.setStyle("-fx-focus-color: transparent;-fx-faint-focus-color: transparent;");
         listView.setCellFactory(l -> new CustomCell());
 
-        filters.setPrefWidth(200);
-        filters.getItems().addAll("Category", "Amount", "Date", "Expense only", "Income only", "Show all");
+        //vbox for all filter elements
+        filter = new VBox(10);
+        filter.setStyle("-fx-background-color: #D1E5F4;-fx-padding: 10;-fx-border-radius: 5;-fx-background-radius: 5;-fx-border-color: #9ABDDC;");
+        filter.setMaxHeight(Region.USE_PREF_SIZE);
         filter.getChildren().addAll(filterBy, filters, categoryFilter, amountFilter, dateFilter, ok);
 
         HBox hbox = new HBox(10);

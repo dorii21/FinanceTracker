@@ -20,11 +20,13 @@ public class LoginView {
     private final PasswordField registerPassword = new PasswordField();
 
     public LoginView() {
+        //input fields to log in
         VBox loginBox = new VBox(5);
         Text loginLabel = new Text("Login");
         loginLabel.setStyle("-fx-font-weight: bold;-fx-font-size: 12px;");
         loginBox.getChildren().addAll(new Text("Email:"), emailField, new Text("Password:"), passwordField, loginButton);
 
+        //input fields to register
         VBox registerBox = new VBox(5);
         Text registerLabel = new Text("Register");
         registerLabel.setStyle("-fx-font-weight: bold;-fx-font-size: 12px;");

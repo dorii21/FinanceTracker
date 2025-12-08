@@ -364,6 +364,21 @@ public class TransactionServiceTest {
     }
 
     @Test
+    void CSVContentTest_specialComment4() {
+        TransactionDTO transactionDTO = new TransactionDTO();
+        transactionDTO.setType(TransactionType.EXPENSE);
+        transactionDTO.setDate(LocalDate.of(2025, 12, 1));
+        transactionDTO.setAmount(2000L);
+        transactionDTO.setCategory(Category.GROCERIES);
+        transactionDTO.setComment("kenyer\"es\"tojas");
+        List<TransactionDTO> list = List.of(transactionDTO);
+        String expected = "Type,Amount,Date,Category,Comment\n" + "EXPENSE,2000,2025-12-01,GROCERIES,\"kenyer\"\"es\"\"tojas\"\n";
+        ByteArrayResource resource = underTest.CSVcontent(list);
+        String result = new String(resource.getByteArray(), StandardCharsets.UTF_8);
+        assertEquals(expected, result);
+    }
+
+    @Test
     void CSVContentTest_nullValues() {
         TransactionDTO transactionDTO = new TransactionDTO();
         transactionDTO.setType(null);

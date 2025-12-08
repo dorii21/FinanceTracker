@@ -76,8 +76,8 @@ public class TransactionController {
     public ResponseEntity<ByteArrayResource> csvExport(@RequestBody List<TransactionDTO> transactions) {
         ByteArrayResource resource = transactionService.CSVcontent(transactions);
         String filename = "transactions.csv";
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType("text/csv"))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType("text/csv")) //response body is a CSV file
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"") //download instead of displaying
                 .body(resource);
     }
 }

@@ -49,14 +49,22 @@ public class TransactionController {
         this.maxDateField = (DatePicker) dateFilter.getChildren().get(3);
         transactions.setAll(transactionService.listTransactions());
 
+        //the input fields are dynamically displayed based on the selection of the filter choicebox
         filters.setOnAction(event -> {
             choiceBoxSelection(filters.getValue());
         });
+
+        //apply filter
         ok.setOnAction(event -> {
             if (filters.getValue().equals("Category")) {
                 transactions.setAll(transactionService.filterByCategory(categoryFilter.getValue()));
             } else if (filters.getValue().equals("Amount")) {
-                transactions.setAll(transactionService.filterByAmount(Long.valueOf(minAmountField.getText()), Long.valueOf(maxAmountField.getText())));
+                //check if the value of the amount fields are non-negative integers
+                if (!minAmountField.getText().matches("\\d+") || !maxAmountField.getText().matches("\\d+")) {
+                    showAlert(Alert.AlertType.ERROR, "Please enter a valid amount");
+                } else {
+                    transactions.setAll(transactionService.filterByAmount(Long.valueOf(minAmountField.getText()), Long.valueOf(maxAmountField.getText())));
+                }
             } else if (filters.getValue().equals("Date")) {
                 transactions.setAll(transactionService.filterByDate(minDateField.getValue(), maxDateField.getValue()));
             } else if (filters.getValue().equals("Expense only")) {
@@ -67,14 +75,20 @@ public class TransactionController {
                 transactions.setAll(transactionService.listTransactions());
             }
         });
+
+        //create new transaction
         add.setOnAction(event -> {
             createTransaction();
         });
+
+        //export the displayed transactions to csv
         export.setOnAction(event -> {
             if (transactionService.csvExport(transactions)) {
                 successfulExport();
             }
         });
+
+        //edit the selected transaction (via double-click)
         listView.setOnMouseClicked(event -> {
             TransactionDTO selected = listView.getSelectionModel().getSelectedItem();
             if (selected != null && event.getClickCount() == 2) {
@@ -85,6 +99,7 @@ public class TransactionController {
 
     public void choiceBoxSelection(String choice) {
         switch (choice) {
+            //display a choicebox for the selection of category to filter by
             case "Category":
                 amountFilter.setVisible(false);
                 amountFilter.setManaged(false);
@@ -95,6 +110,7 @@ public class TransactionController {
                 ok.setVisible(true);
                 ok.setManaged(true);
                 break;
+            //display 2 datepickers to set the starting and end date
             case "Date":
                 amountFilter.setVisible(false);
                 amountFilter.setManaged(false);
@@ -105,6 +121,7 @@ public class TransactionController {
                 ok.setVisible(true);
                 ok.setManaged(true);
                 break;
+            //display 2 textfields to set the minimum and maximum amount
             case "Amount":
                 amountFilter.setVisible(true);
                 amountFilter.setManaged(true);
@@ -115,6 +132,7 @@ public class TransactionController {
                 ok.setVisible(true);
                 ok.setManaged(true);
                 break;
+            //hide the conditional input fields in case nothing or "show all" is selected
             default:
                 amountFilter.setVisible(false);
                 amountFilter.setManaged(false);
@@ -128,6 +146,7 @@ public class TransactionController {
     }
 
     public void editTransaction(TransactionDTO transaction) {
+        //open an edit window and display input fields to update the transaction
         Stage newStage = new Stage();
         Text amount = new Text("Amount:");
         Text date = new Text("Date:");
@@ -175,19 +194,23 @@ public class TransactionController {
 
         if (transaction.getType().equals(TransactionType.INCOME)) categoryField.setDisable(true);
 
+        //update the transaction based on the given values
         save.setOnAction(event -> {
-            if (!amountField.getText().isBlank()) {
+            if (!amountField.getText().isBlank() && amountField.getText().matches("\\d+")) {
                 transaction.setAmount(Long.valueOf(amountField.getText()));
+                transaction.setCategory(categoryField.getValue());
+                transaction.setDate(dateField.getValue());
+                transaction.setComment(commentField.getText());
+                transaction.setType(transaction.getType());
+                transactionService.updateTransaction(transaction);
+                transactions.setAll(transactionService.listTransactions());
+                newStage.close();
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Invalid amount");
             }
-            transaction.setCategory(categoryField.getValue());
-            transaction.setDate(dateField.getValue());
-            transaction.setComment(commentField.getText());
-            transaction.setType(transaction.getType());
-            transactionService.updateTransaction(transaction);
-            transactions.setAll(transactionService.listTransactions());
-            newStage.close();
         });
 
+        //delete the transaction
         delete.setOnAction(event -> {
             transactionService.deleteTransaction(transaction);
             transactions.setAll(transactionService.listTransactions());
@@ -214,6 +237,7 @@ public class TransactionController {
         newStage.show();
     }
 
+    //similar to editTransaction
     public void createTransaction() {
         Text amount = new Text("Amount:");
         Text date = new Text("Date:");
@@ -274,15 +298,22 @@ public class TransactionController {
         stage.setScene(scene);
 
         createButton.setOnAction(event -> {
-            TransactionDTO transactionDTO = new TransactionDTO(typeField.getValue(), Long.valueOf(amountField.getText()), datePicker.getValue(), categoryField.getValue(), commentField.getText());
-            transactionService.createTransaction(transactionDTO);
-            transactions.setAll(transactionService.listTransactions());
-            stage.close();
+            if (!amountField.getText().matches("\\d+")) {
+                showAlert(Alert.AlertType.ERROR, "Invalid amount");
+            } else if (typeField.getValue() == null) {
+                showAlert(Alert.AlertType.ERROR, "Please select a type");
+            } else {
+                TransactionDTO transactionDTO = new TransactionDTO(typeField.getValue(), Long.valueOf(amountField.getText()), datePicker.getValue(), categoryField.getValue(), commentField.getText());
+                transactionService.createTransaction(transactionDTO);
+                transactions.setAll(transactionService.listTransactions());
+                stage.close();
+            }
         });
 
         stage.show();
     }
 
+    //confirm successful export
     public void successfulExport() {
         Text text = new Text("Transactions successfully exported");
         VBox vBox = new VBox(text);
@@ -292,5 +323,12 @@ public class TransactionController {
         stage.setTitle("Export successful");
         stage.setScene(scene);
         stage.show();
+    }
+
+    private void showAlert(Alert.AlertType alertType, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
