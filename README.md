@@ -17,5 +17,5 @@ A full stack application for managing personal finances.
 ```
 docker compose up -d
 ```
-3. **Run the backend:** Open the /FinanceTracker folder in your IDE and run the FinanceTrackerApplication.java file.
-4. **Run the frontend:** Open the /JavaFX folder in your IDE and run the HelloApplication.java file.
+2. **Run the backend:** Open the /FinanceTracker folder in your IDE and run the FinanceTrackerApplication.java file.
+3. **Run the frontend:** Open the /JavaFX folder in your IDE and run the HelloApplication.java file.
