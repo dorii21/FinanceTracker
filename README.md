@@ -13,7 +13,7 @@ A full stack application for managing personal finances.
 - **/JavaFX:** JavaFX-based user interface
 
 ## Usage
-1. **Start the database:** Ensure you have Docker installed. In the root directory of the project, run the following command:
+1. **Start the database:** Ensure you have Docker installed. In the /FinanceTracker directory of the project (where the docker-compose.yml file is located), run the following command:
 ```
 docker compose up -d
 ```
